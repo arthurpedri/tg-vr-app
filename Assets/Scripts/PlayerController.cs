@@ -12,7 +12,8 @@ public class PlayerController : MonoBehaviour
     float velocidadeCorrendo = 2.77f;
     float comprimentoCarro = 5.2f;
     float larguraRua = 10f; // largura um pouco maior do que a rua em si (largura de onde o personagem comeca a atravessar e onde termina)
-    float meioDaRua = 6; // coordenada z especifica da metade da rua 
+    float larguraFaixa = 4f; // largura da faixa de pedestres
+     float meioDaRua = 6; // coordenada z especifica da metade da rua (posicao) 
     private float cruzamentoPos, distanciaCarroX;
     private float distanciaPerto, distanciaLonge;
     private bool atravessando = false;
@@ -32,8 +33,8 @@ public class PlayerController : MonoBehaviour
         Screen.orientation = ScreenOrientation.LandscapeLeft; // iniciando o VR
         StartCoroutine(LoadDevice("cardboard"));
 
-        Vector3 oldPosition = transform.position;
-        Vector3 newPosition = transform.position + new Vector3(0,0,larguraRua);
+        oldPosition = transform.position;
+        newPosition = transform.position + new Vector3(0,0,larguraRua);
         currentTime = 0;
 
         emMovimento = true;
@@ -101,7 +102,7 @@ public class PlayerController : MonoBehaviour
             if ((carro.transform.position.x + comprimentoCarro/2) < transform.position.x) // carro esta na esquerda   |  posicao carro + comprimentoCarro/2 é o nariz do carro
             {
                 distanciaCarroX = Mathf.Abs((carro.transform.position.x + comprimentoCarro/2) - transform.position.x); // distancia do carro com o jogador no eixo X
-                if (carro.transform.position.z < meioDaRua && distanciaPerto > distanciaCarroX) // lado perto (posicao z < 6) e carro mais proximo ate agora
+                if (carro.transform.position.z < meioDaRua && distanciaPerto > distanciaCarroX) // lado perto (posicao z < meioDaRua) e carro mais proximo ate agora
                 {
                     distanciaPerto = distanciaCarroX;
                     if (distanciaCarroX / Manager.Instance.defaultSpeed > larguraRua / velocidadeAndando) // passou andando sem carro passar por tras enquanto na rua (inicialmente era 7.2s, avaliar o pq disso)
@@ -147,7 +148,7 @@ public class PlayerController : MonoBehaviour
             
         }
 
-        if(Manager.Instance.distanciaCruzamento <= 2.5) // no cruzamento
+        if(Manager.Instance.distanciaCruzamento <= larguraFaixa / 2) // no cruzamento
         {
             Manager.Instance.cruzamentoCorreto = 1;
         }
@@ -155,7 +156,7 @@ public class PlayerController : MonoBehaviour
         {
             Manager.Instance.cruzamentoCorreto = 0;
         }
-        // PararCarros();
+
         PrepararTravessia();
         Debug.Log("DistanciaPerto: " + distanciaPerto + "| DistanciaLonge: " + distanciaLonge);
         Debug.Log("Perto: " + Manager.Instance.passagemPerto + " | Longe: " + Manager.Instance.passagemLonge + " | Cruzamento: " + Manager.Instance.cruzamentoCorreto);
@@ -208,7 +209,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    public void AtravessarFaixa()
+    public void AtravessarFaixa() // nao esta feito
     {
         float endTime;
         float lerpPercent = 0;
