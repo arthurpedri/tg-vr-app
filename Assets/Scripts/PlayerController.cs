@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
     float comprimentoCarro = 5.2f;
     float larguraRua = 10f; // largura um pouco maior do que a rua em si (largura de onde o personagem comeca a atravessar e onde termina)
     float larguraFaixa = 4f; // largura da faixa de pedestres
-     float meioDaRua = 6; // coordenada z especifica da metade da rua (posicao) 
+    float meioDaRua = 6; // coordenada z especifica da metade da rua (posicao) 
     private float cruzamentoPos, distanciaCarroX;
     private float distanciaPerto, distanciaLonge;
     private bool atravessando = false;
@@ -57,7 +57,7 @@ public class PlayerController : MonoBehaviour
             if(emMovimento){
                 Atravessar();
                 if (carroQueBate){
-                    if(Mathf.Abs((carroQueBate.transform.position.x + comprimentoCarro/2) - transform.position.x) <= 1){
+                    if(Mathf.Abs((carroQueBate.transform.position.x + comprimentoCarro/2) - transform.position.x) <= 0.1){
                         PararCarros();
                     }
                 }
