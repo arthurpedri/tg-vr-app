@@ -30,7 +30,8 @@ public class SightCollisionHandler : MonoBehaviour
                 TargetRenderer.material.color = new Color32(0,204,0,255);
                 other.gameObject.SetActive(false);
                 
-                myPC.CalculoColisao();
+                // myPC.CalculoColisao();
+                myPC.PrepararTravessia();
             } else 
             {
                 TargetRenderer.material.color = new Color32(Convert.ToByte(Mathf.Floor((1-((float)ts.Milliseconds/500))*255)),Convert.ToByte(Mathf.Floor((1-((float)ts.Milliseconds/500))*55+200)),Convert.ToByte(Mathf.Floor((1-((float)ts.Milliseconds/500))*255)),255);

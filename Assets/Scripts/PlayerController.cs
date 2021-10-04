@@ -9,8 +9,10 @@ public class PlayerController : MonoBehaviour
 {
     // velocidade em unidades/s  (m/s)
     float velocidadeAndando = 1.52f;
-    float velocidadeCorrendo = 2.77f;
+    float velocidadeJogador = 5.77f;
     float comprimentoCarro = 5.2f;
+    float sentidoRua = 1;
+    float hitboxLarguraCarro = 3f; // largura maior que a do carro 
     float larguraRua = 10f; // largura um pouco maior do que a rua em si (largura de onde o personagem comeca a atravessar e onde termina)
     float larguraFaixa = 4f; // largura da faixa de pedestres
     float meioDaRua = 6; // coordenada z especifica da metade da rua (posicao) 
@@ -49,20 +51,16 @@ public class PlayerController : MonoBehaviour
         float horizontalInput = Input.GetAxis("Horizontal");
         if (Input.GetKeyDown("space"))
         {
-            CalculoColisao();
+            // CalculoColisao();
+            PrepararTravessia();
         }
 
         if (atravessando)
         {
             if(emMovimento){
                 Atravessar();
-                if (carroQueBate){
-                    if(Mathf.Abs((carroQueBate.transform.position.x + comprimentoCarro/2) - transform.position.x) <= 0.1){
-                        PararCarros();
-                    }
-                }
-                
-                
+                // calcula se carro bate
+                CalculoColisao();
             }
 
         }
@@ -90,6 +88,35 @@ public class PlayerController : MonoBehaviour
 
     public void CalculoColisao()
     {
+        foreach (GameObject carro in carros)
+        {
+            if ((carro.transform.position.z - hitboxLarguraCarro/2) <= transform.position.z && transform.position.z <= (carro.transform.position.z + hitboxLarguraCarro/2)){ // 
+                if (Mathf.Abs((carro.transform.position.x + sentidoRua * comprimentoCarro/2) - transform.position.x) <= 1.5){ // carro vai parar a 1.5 unidade de distancia
+                    Debug.Log("Player x: "+transform.position.x + " z: " + transform.position.z);
+                    Debug.Log("Carro x: "+ (carro.transform.position.x + comprimentoCarro/2) + " z: " + (carro.transform.position.z + hitboxLarguraCarro/2));
+                    PararCarros();
+                    Debug.Log("Bateu na frente");
+                    return;
+                }
+            }
+            if ((Mathf.Abs(carro.transform.position.z - hitboxLarguraCarro/2) - transform.position.z) < 1.5){
+                if ((carro.transform.position.x - comprimentoCarro/2) <= 
+                transform.position.x && transform.position.x <= (carro.transform.position.x + comprimentoCarro/2)){//voce esta do lado do carro
+                    if (Mathf.Abs(transform.position.x - (carro.transform.position.x - sentidoRua * comprimentoCarro/2)) / Manager.Instance.defaultSpeed >= // tempo que o carro leva para passar a traseira pelo ponto onde esta o jogador deve ser maior ou igual do que o tempo que o jogador leva para chegar até o carro para colidir
+                    (Mathf.Abs((carro.transform.position.z - hitboxLarguraCarro/2) - transform.position.z)) // distancia do jogador ate o carro 
+                    / velocidadeJogador){  
+                        PararCarros();
+                        Debug.Log("Bateu no meio");
+                        return;
+                }
+                }
+            }
+            
+        }
+    }
+
+    public void oldCalculoColisao()
+    {
 
         distanciaPerto = Mathf.Infinity;
         distanciaLonge = Mathf.Infinity;
@@ -113,7 +140,7 @@ public class PlayerController : MonoBehaviour
                     {
                         Manager.Instance.passagemPerto = 2;
                     }
-                    else if (distanciaCarroX / Manager.Instance.defaultSpeed > (larguraRua / 2) / velocidadeCorrendo) // passou correndo 
+                    else if (distanciaCarroX / Manager.Instance.defaultSpeed > (larguraRua / 2) / velocidadeJogador) // passou correndo 
                     {
                         Manager.Instance.passagemPerto = 1;
                     }
@@ -131,7 +158,7 @@ public class PlayerController : MonoBehaviour
                     {
                         Manager.Instance.passagemLonge = 2;
                     } 
-                    else if (distanciaCarroX / Manager.Instance.defaultSpeed > larguraRua / velocidadeCorrendo) // passou correndo 
+                    else if (distanciaCarroX / Manager.Instance.defaultSpeed > larguraRua / velocidadeJogador) // passou correndo 
                     {
                         Manager.Instance.passagemLonge = 1;
                     }
@@ -166,7 +193,7 @@ public class PlayerController : MonoBehaviour
 
     public void Andar(int direcao) // -1 esquerda     1 direita
     {
-        transform.position = transform.position + new Vector3(direcao * velocidadeAndando * Time.deltaTime, 0, 0);
+        transform.position = transform.position + new Vector3(direcao * velocidadeAndando * Time.deltaTime * 10, 0, 0);
     }
 
     public void PrepararTravessia(){
@@ -184,16 +211,17 @@ public class PlayerController : MonoBehaviour
         float lerpPercent = 0;
 
         
-        if ((Manager.Instance.passagemPerto == 2 || Manager.Instance.passagemPerto == 3) && Manager.Instance.passagemLonge == 2){
-            endTime = larguraRua/velocidadeAndando;
-            Debug.Log("Foi Andando");
-        }
-        else {
+        // if ((Manager.Instance.passagemPerto == 2 || Manager.Instance.passagemPerto == 3) && Manager.Instance.passagemLonge == 2){
+        //     endTime = larguraRua/velocidadeAndando;
+        //     Debug.Log("Foi Andando");
+        // }
+        // else {
             
-            endTime = larguraRua/velocidadeCorrendo;
-            Debug.Log("Foi Correndo");
-        }
+        //     endTime = larguraRua/velocidadeJogador;
+        //     Debug.Log("Foi Correndo");
+        // }
         
+        endTime = larguraRua/velocidadeJogador;
 
         if(currentTime < endTime){
             currentTime += Time.deltaTime;
@@ -220,7 +248,7 @@ public class PlayerController : MonoBehaviour
                 
             }
             else {
-                endTime = larguraRua/velocidadeCorrendo;
+                endTime = larguraRua/velocidadeJogador;
                 
             }
             if(currentTime < endTime){
@@ -235,7 +263,7 @@ public class PlayerController : MonoBehaviour
                 endTime = larguraRua/velocidadeAndando;
             }
             else {
-                endTime = larguraRua/velocidadeCorrendo;
+                endTime = larguraRua/velocidadeJogador;
             }
         }
 
@@ -279,7 +307,7 @@ public class PlayerController : MonoBehaviour
     IEnumerator chamarEndMenu()
     {
         yield return new WaitForSeconds(5);
-        SceneManager.LoadScene("EndMenu");
+        // SceneManager.LoadScene("EndMenu");
     }
 
 }
