@@ -39,6 +39,8 @@ public class PlayerController : MonoBehaviour
         newPosition = transform.position + new Vector3(0,0,larguraRua);
         currentTime = 0;
 
+        transform.position = transform.position + new Vector3(0, Manager.Instance.altura, 0);
+
         emMovimento = true;
 
         cruzamentoPos = cruzamento.transform.position.x;
