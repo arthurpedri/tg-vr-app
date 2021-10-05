@@ -1,17 +1,31 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR;
-using UnityEngine.SceneManagement;
 using System;
+using UnityEngine.SceneManagement;
 
 public class MenuController : MonoBehaviour {
 
-	public Button Jogar, Opcoes, Voltar;
+	// Estados do menu
 	public GameObject inicial, menuopcoes;
-	public Slider slider;
-	public InputField velocidade;
+
+	// Botões de interação
+	public Button Jogar, Opcoes, Voltar;
+
+	// Velocidade carros
+	public Slider VelocidadeSlider;
+	public Text VelocidadeCarrosText;
+
+	// Informações Jogador
+	public InputField Nome;
+	public InputField Idade;
+	public InputField Altura;
+
+	// Informações Ambiente
+	public Dropdown Periodo;
+	public Dropdown Ambiente;
+	public Dropdown Dificuldade;
+
 
 	// Use this for initialization
 	void Start () {
@@ -22,8 +36,13 @@ public class MenuController : MonoBehaviour {
 		Jogar.onClick.AddListener(delegate {LoadScene("PrimeiraCena"); });
 		Opcoes.onClick.AddListener(LoadOpcoes);
 		Voltar.onClick.AddListener(LoadInicial);
-		velocidade.onValueChanged.AddListener(changeSpeed);
-		menuopcoes.SetActive(false);
+		VelocidadeSlider.onValueChanged.AddListener(delegate {changeSpeed(); });
+
+		Periodo.onValueChanged.AddListener(delegate {changePeriodo(); });
+		Ambiente.onValueChanged.AddListener(delegate {changeAmbiente(); });
+		Dificuldade.onValueChanged.AddListener(delegate {changeDificuldade(); });
+		
+		menuopcoes.SetActive(false); // começando com o menu de opcoes desativado
 	}
 	
 	// Update is called once per frame
@@ -33,6 +52,12 @@ public class MenuController : MonoBehaviour {
 
 	public void LoadScene(string cena)
     {
+		// salvar informações do jogo
+		Manager.Instance.nome = Nome.text != "" ? Nome.text : "Nome Vazio"; // nome padrão Nome Vazio
+		Manager.Instance.idade = Idade.text != "" ? int.Parse(Idade.text) : 0; // idade padrão 0
+		Manager.Instance.altura = Altura.text != "" ? float.Parse(Altura.text) / 100 : 1.8f;  // altura padrão 1.8
+		Manager.Instance.timestamp = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
+		// Manager.Instance.printAll();
         SceneManager.LoadScene (cena);
     }
 
@@ -42,19 +67,53 @@ public class MenuController : MonoBehaviour {
     	menuopcoes.SetActive(true);
     }
 
-	public void changeSpeed(string strSpeed)
+	public void changeSpeed()
 	{
-		int speed = Int32.Parse(strSpeed);
+		float speed = VelocidadeSlider.value * 20; // slider tem valores baixos, é incrementado em 1
+		VelocidadeCarrosText.text = "Velocidade dos carros: " + speed + "km/h";
 		Manager.Instance.defaultSpeed = speed / 3.6f;
-		Debug.Log(Manager.Instance.defaultSpeed);
-
+		// Debug.Log(Manager.Instance.defaultSpeed);
 	}
 
 	public void LoadInicial()
     {
-    	menuopcoes.SetActive(false);
-    	inicial.SetActive(true);
+		if(int.Parse(Altura.text) < 100 || int.Parse(Altura.text) > 280){
+			Altura.text = "";
+			Altura.placeholder.GetComponent<Text>().text = "Entre 100 e 280cm";
+			Altura.GetComponent<Image>().color = new Color32(255,177,177,255);
+			return;
+		}
+		else{
+    		menuopcoes.SetActive(false);
+	    	inicial.SetActive(true);
+			Altura.GetComponent<Image>().color = new Color32(255,255,255,255);
+		}
     	
     }
+
+	void changeAltura()
+	{
+		if(int.Parse(Altura.text) <= 100 || int.Parse(Altura.text) >= 280){
+			Altura.text = "";
+			Altura.placeholder.GetComponent<Text>().text = "Entre 100 e 280cm";
+		}
+	}
+
+	void changePeriodo()
+	{
+		Manager.Instance.periodo = Periodo.captionText.text;
+	}
+
+	void changeAmbiente()
+	{
+		Manager.Instance.ambiente = Ambiente.captionText.text;
+	}
+
+	void changeDificuldade()
+	{
+		Manager.Instance.dificuldade = Dificuldade.captionText.text;
+	}
+
+
 }
 
