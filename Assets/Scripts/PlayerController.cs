@@ -28,6 +28,9 @@ public class PlayerController : MonoBehaviour
     public Vector3 newPosition; // destino da travessia
     public float currentTime = 0;
     public AudioClip somFreio;
+    DateTime tempoInicialCena;
+    public ContadorCarros contCarros;
+    
     
 
     void Start()
@@ -39,6 +42,9 @@ public class PlayerController : MonoBehaviour
         newPosition = transform.position + new Vector3(0,0,larguraRua);
         currentTime = 0;
 
+        tempoInicialCena = DateTime.Now;
+
+        transform.position = transform.position - new Vector3(0, 1.8f, 0);
         transform.position = transform.position + new Vector3(0, Manager.Instance.altura, 0);
 
         emMovimento = true;
@@ -53,7 +59,6 @@ public class PlayerController : MonoBehaviour
         float horizontalInput = Input.GetAxis("Horizontal");
         if (Input.GetKeyDown("space"))
         {
-            // CalculoColisao();
             PrepararTravessia();
         }
 
@@ -73,6 +78,7 @@ public class PlayerController : MonoBehaviour
         Manager.Instance.distanciaCruzamento = Mathf.Abs(cruzamentoPos - transform.position.x);
 
     }
+
 
     IEnumerator LoadDevice(string newDevice)
     {
@@ -204,6 +210,9 @@ public class PlayerController : MonoBehaviour
         middlePosition = transform.position + new Vector3(0,0,meioDaRua);
         newPosition = transform.position + new Vector3(0,0,larguraRua);
 
+        SalvarDadosDecisaoAtravessar();
+        Manager.Instance.printAll();
+
         setAtravessando(true);
     }
 
@@ -294,6 +303,63 @@ public class PlayerController : MonoBehaviour
         setMovimento(false);
         StartCoroutine(chamarEndMenu());
         Debug.Log("Jogo Acabou, Menu Em 5 Segundos");
+    }
+
+    void SalvarDadosDecisaoAtravessar()
+    {
+        // Cruzamento correto e distancia do cruzamento
+        Manager.Instance.distanciaCruzamento = Mathf.Abs(cruzamento.transform.position.x - transform.position.x);
+        if(Manager.Instance.distanciaCruzamento <= larguraFaixa / 2){ // no cruzamento
+            Manager.Instance.cruzamentoCorreto = 1;
+            Manager.Instance.distanciaCruzamento = 0;
+        }
+        else {
+            Manager.Instance.distanciaCruzamento -=  larguraFaixa / 2;
+            Manager.Instance.cruzamentoCorreto = 0;
+        }
+
+        // distancia do carro mais proximo quando decidiu atravessar e a faixa dele
+        SalvarDistanciaCarroMaisProximo();
+
+        // quantos segundos jogador demorou para decidir atravessar
+        TimeSpan ts = DateTime.Now.Subtract(tempoInicialCena);
+        Manager.Instance.tempoParaTomadaDeDecisao = ts.Seconds;
+
+        // quantos carros passaram até a travessia ocorrer
+        Manager.Instance.quantidadeDeCarrosQueJaPassaram = contCarros.quantidade;
+
+        // velocidade escolhida para atravessar (primeira)
+
+        // se acelerou enquanto estava atravessando
+
+    }
+
+    void SalvarDistanciaCarroMaisProximo(){ // guarda a distancia e faixa do carro mais proximo no singleton
+        (Manager.Instance.distanciaCarroMaisProximo, Manager.Instance.faixaCarroMaisProximo) = DistanciaCarroMaisProximo();
+    }
+
+    (float, int) DistanciaCarroMaisProximo(){
+        float menorDistancia = Mathf.Infinity;
+        int faixa = -1;
+        foreach (GameObject carro in carros){
+            if (carro.tag == "NasceEsqVaiDir"){
+                if (carro.transform.position.x + comprimentoCarro/2 <= transform.position.x){
+                    if (Mathf.Abs((carro.transform.position.x + comprimentoCarro/2) - transform.position.x) < menorDistancia){
+                        menorDistancia = Mathf.Abs((carro.transform.position.x + comprimentoCarro/2) - transform.position.x);
+                        faixa = carro.transform.position.z < meioDaRua ? 0 : 1;
+                    }
+                } 
+            }
+            else if (carro.tag == "NasceDirVaiEsq"){
+                if (carro.transform.position.x - comprimentoCarro/2 >= transform.position.x){
+                    if (Mathf.Abs((carro.transform.position.x - comprimentoCarro/2) - transform.position.x) < menorDistancia){
+                        menorDistancia = Mathf.Abs((carro.transform.position.x - comprimentoCarro/2) - transform.position.x);
+                        faixa = carro.transform.position.z < meioDaRua ? 0 : 1;
+                    }
+                }
+            }
+        }
+        return (menorDistancia, faixa);
     }
 
     void setAtravessando(bool valor)

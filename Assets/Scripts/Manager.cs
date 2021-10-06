@@ -17,13 +17,19 @@ public class Manager : Singleton<Manager>
     public int idade = 0;
     public float altura = 1.8f;
     public string timestamp;
+    public float distanciaCarroMaisProximo;
+    public int faixaCarroMaisProximo; // -1 bug / 0 primeira / 1 segunda 
+    public int tempoParaTomadaDeDecisao;
+    public int quantidadeDeCarrosQueJaPassaram;
 
     public void printAll()
     {
-        Debug.Log("Velocidade Carros: " + defaultSpeed + " | Distancia Cruzamento: " + distanciaCruzamento);
+        Debug.Log("Velocidade Carros: " + defaultSpeed + " | Distancia Cruzamento: " + distanciaCruzamento + "Cruzamento Correto: " + cruzamentoCorreto);
         Debug.Log("Período: " + periodo + " | Ambiente: " + ambiente + " | Dificuldade: " + dificuldade);
         Debug.Log("Nome: " + nome + " | Idade: " + idade + " | Altura: " + altura);
         Debug.Log("Timestamp: " + timestamp);
+        Debug.Log("Distancia Carro Mais Proximo: " + distanciaCarroMaisProximo + " | Faixa Carro Mais Proximo: " + faixaCarroMaisProximo);
+        Debug.Log("Segundos Tomada Decisao: " + tempoParaTomadaDeDecisao + " | Quantidade Carros Ja Passaram: " + quantidadeDeCarrosQueJaPassaram);
     }
 
 }
