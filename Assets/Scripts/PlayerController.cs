@@ -98,23 +98,25 @@ public class PlayerController : MonoBehaviour
     {
         foreach (GameObject carro in carros)
         {
+            // testando o caso de bater na frente do carro
             if ((carro.transform.position.z - hitboxLarguraCarro/2) <= transform.position.z && transform.position.z <= (carro.transform.position.z + hitboxLarguraCarro/2)){ // 
                 if (Mathf.Abs((carro.transform.position.x + sentidoRua * comprimentoCarro/2) - transform.position.x) <= 1.5){ // carro vai parar a 1.5 unidade de distancia
                     Debug.Log("Player x: "+transform.position.x + " z: " + transform.position.z);
                     Debug.Log("Carro x: "+ (carro.transform.position.x + comprimentoCarro/2) + " z: " + (carro.transform.position.z + hitboxLarguraCarro/2));
                     PararCarros();
-                    Debug.Log("Bateu na frente");
+                    // Debug.Log("Bateu na frente");
                     return;
                 }
             }
-            if ((Mathf.Abs(carro.transform.position.z - hitboxLarguraCarro/2) - transform.position.z) < 1.5){
+            // testando o caso de bater no lado do carro
+            if ((Mathf.Abs(carro.transform.position.z - hitboxLarguraCarro/2) - transform.position.z) < 1.5){ 
                 if ((carro.transform.position.x - comprimentoCarro/2) <= 
                 transform.position.x && transform.position.x <= (carro.transform.position.x + comprimentoCarro/2)){//voce esta do lado do carro
                     if (Mathf.Abs(transform.position.x - (carro.transform.position.x - sentidoRua * comprimentoCarro/2)) / Manager.Instance.defaultSpeed >= // tempo que o carro leva para passar a traseira pelo ponto onde esta o jogador deve ser maior ou igual do que o tempo que o jogador leva para chegar até o carro para colidir
                     (Mathf.Abs((carro.transform.position.z - hitboxLarguraCarro/2) - transform.position.z)) // distancia do jogador ate o carro 
                     / velocidadeJogador){  
                         PararCarros();
-                        Debug.Log("Bateu no meio");
+                        // Debug.Log("Bateu no meio");
                         return;
                 }
                 }
@@ -123,80 +125,80 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void oldCalculoColisao()
-    {
+    // public void oldCalculoColisao()
+    // {
 
-        distanciaPerto = Mathf.Infinity;
-        distanciaLonge = Mathf.Infinity;
-        Manager.Instance.passagemLonge = -1;
-        Manager.Instance.passagemPerto = -1;
-        Manager.Instance.cruzamentoCorreto = -1;
-        foreach (GameObject carro in carros)
-        {
-            //    TODO   tratar casos de carros grudados no jogador (muito proximos do x do player)
-            if ((carro.transform.position.x + comprimentoCarro/2) < transform.position.x) // carro esta na esquerda   |  posicao carro + comprimentoCarro/2 é o nariz do carro
-            {
-                distanciaCarroX = Mathf.Abs((carro.transform.position.x + comprimentoCarro/2) - transform.position.x); // distancia do carro com o jogador no eixo X
-                if (carro.transform.position.z < meioDaRua && distanciaPerto > distanciaCarroX) // lado perto (posicao z < meioDaRua) e carro mais proximo ate agora
-                {
-                    distanciaPerto = distanciaCarroX;
-                    if (distanciaCarroX / Manager.Instance.defaultSpeed > larguraRua / velocidadeAndando) // passou andando sem carro passar por tras enquanto na rua (inicialmente era 7.2s, avaliar o pq disso)
-                    {
-                        Manager.Instance.passagemPerto = 3;
-                    }
-                    else if (distanciaCarroX / Manager.Instance.defaultSpeed > (larguraRua / 2) / velocidadeAndando) // passou andando  (larguraRua / 2) é o fim da primeira faixa
-                    {
-                        Manager.Instance.passagemPerto = 2;
-                    }
-                    else if (distanciaCarroX / Manager.Instance.defaultSpeed > (larguraRua / 2) / velocidadeJogador) // passou correndo 
-                    {
-                        Manager.Instance.passagemPerto = 1;
-                    }
-                    else // bateu
-                    {
-                        carroQueBate = carro; // sempre que um carro da primeira faixa bater ele será o carro que bate
-                        Manager.Instance.passagemPerto = 0;
+    //     distanciaPerto = Mathf.Infinity;
+    //     distanciaLonge = Mathf.Infinity;
+    //     Manager.Instance.passagemLonge = -1;
+    //     Manager.Instance.passagemPerto = -1;
+    //     Manager.Instance.cruzamentoCorreto = -1;
+    //     foreach (GameObject carro in carros)
+    //     {
+    //         //    TODO   tratar casos de carros grudados no jogador (muito proximos do x do player)
+    //         if ((carro.transform.position.x + comprimentoCarro/2) < transform.position.x) // carro esta na esquerda   |  posicao carro + comprimentoCarro/2 é o nariz do carro
+    //         {
+    //             distanciaCarroX = Mathf.Abs((carro.transform.position.x + comprimentoCarro/2) - transform.position.x); // distancia do carro com o jogador no eixo X
+    //             if (carro.transform.position.z < meioDaRua && distanciaPerto > distanciaCarroX) // lado perto (posicao z < meioDaRua) e carro mais proximo ate agora
+    //             {
+    //                 distanciaPerto = distanciaCarroX;
+    //                 if (distanciaCarroX / Manager.Instance.defaultSpeed > larguraRua / velocidadeAndando) // passou andando sem carro passar por tras enquanto na rua (inicialmente era 7.2s, avaliar o pq disso)
+    //                 {
+    //                     Manager.Instance.passagemPerto = 3;
+    //                 }
+    //                 else if (distanciaCarroX / Manager.Instance.defaultSpeed > (larguraRua / 2) / velocidadeAndando) // passou andando  (larguraRua / 2) é o fim da primeira faixa
+    //                 {
+    //                     Manager.Instance.passagemPerto = 2;
+    //                 }
+    //                 else if (distanciaCarroX / Manager.Instance.defaultSpeed > (larguraRua / 2) / velocidadeJogador) // passou correndo 
+    //                 {
+    //                     Manager.Instance.passagemPerto = 1;
+    //                 }
+    //                 else // bateu
+    //                 {
+    //                     carroQueBate = carro; // sempre que um carro da primeira faixa bater ele será o carro que bate
+    //                     Manager.Instance.passagemPerto = 0;
 
-                    }
-                }
-                if (carro.transform.position.z >= meioDaRua && distanciaLonge > distanciaCarroX) // lado longe da rua e carro mais proximo ate agora
-                {
-                    distanciaLonge = distanciaCarroX;
-                    if (distanciaCarroX / Manager.Instance.defaultSpeed > larguraRua / velocidadeAndando) // passou andando 
-                    {
-                        Manager.Instance.passagemLonge = 2;
-                    } 
-                    else if (distanciaCarroX / Manager.Instance.defaultSpeed > larguraRua / velocidadeJogador) // passou correndo 
-                    {
-                        Manager.Instance.passagemLonge = 1;
-                    }
-                    else // bateu
-                    {
-                        if (Manager.Instance.passagemPerto != 0){ // caso o carro da primeira faixa não bateu
-                            carroQueBate = carro;
-                        }
-                        Manager.Instance.passagemLonge = 0;
-                    }
-                }
+    //                 }
+    //             }
+    //             if (carro.transform.position.z >= meioDaRua && distanciaLonge > distanciaCarroX) // lado longe da rua e carro mais proximo ate agora
+    //             {
+    //                 distanciaLonge = distanciaCarroX;
+    //                 if (distanciaCarroX / Manager.Instance.defaultSpeed > larguraRua / velocidadeAndando) // passou andando 
+    //                 {
+    //                     Manager.Instance.passagemLonge = 2;
+    //                 } 
+    //                 else if (distanciaCarroX / Manager.Instance.defaultSpeed > larguraRua / velocidadeJogador) // passou correndo 
+    //                 {
+    //                     Manager.Instance.passagemLonge = 1;
+    //                 }
+    //                 else // bateu
+    //                 {
+    //                     if (Manager.Instance.passagemPerto != 0){ // caso o carro da primeira faixa não bateu
+    //                         carroQueBate = carro;
+    //                     }
+    //                     Manager.Instance.passagemLonge = 0;
+    //                 }
+    //             }
                 
-            }
+    //         }
             
-        }
+    //     }
 
-        if(Manager.Instance.distanciaCruzamento <= larguraFaixa / 2) // no cruzamento
-        {
-            Manager.Instance.cruzamentoCorreto = 1;
-        }
-        else
-        {
-            Manager.Instance.cruzamentoCorreto = 0;
-        }
+    //     if(Manager.Instance.distanciaCruzamento <= larguraFaixa / 2) // no cruzamento
+    //     {
+    //         Manager.Instance.cruzamentoCorreto = 1;
+    //     }
+    //     else
+    //     {
+    //         Manager.Instance.cruzamentoCorreto = 0;
+    //     }
 
-        PrepararTravessia();
-        Debug.Log("DistanciaPerto: " + distanciaPerto + "| DistanciaLonge: " + distanciaLonge);
-        Debug.Log("Perto: " + Manager.Instance.passagemPerto + " | Longe: " + Manager.Instance.passagemLonge + " | Cruzamento: " + Manager.Instance.cruzamentoCorreto);
+    //     PrepararTravessia();
+    //     Debug.Log("DistanciaPerto: " + distanciaPerto + "| DistanciaLonge: " + distanciaLonge);
+    //     Debug.Log("Perto: " + Manager.Instance.passagemPerto + " | Longe: " + Manager.Instance.passagemLonge + " | Cruzamento: " + Manager.Instance.cruzamentoCorreto);
 
-    }
+    // }
 
 
     public void Andar(int direcao) // -1 esquerda     1 direita
@@ -211,7 +213,7 @@ public class PlayerController : MonoBehaviour
         newPosition = transform.position + new Vector3(0,0,larguraRua);
 
         SalvarDadosDecisaoAtravessar();
-        Manager.Instance.printAll();
+        
 
         setAtravessando(true);
     }
@@ -241,55 +243,53 @@ public class PlayerController : MonoBehaviour
         } 
         else {
             transform.position = Vector3.Lerp(oldPosition, newPosition, 1);
-            setAtravessando(false);
-            StartCoroutine(chamarEndMenu());
-            Debug.Log("Jogo Acabou, Menu Em 5 Segundos");
+            ConcluirSimulacao();
         }
 
     }
 
-    public void AtravessarFaixa() // nao esta feito
-    {
-        float endTime;
-        float lerpPercent = 0;
+    // public void AtravessarFaixa() // nao esta feito
+    // {
+    //     float endTime;
+    //     float lerpPercent = 0;
 
-        if(transform.position.z < meioDaRua){
-            if (Manager.Instance.passagemPerto == 2 || Manager.Instance.passagemPerto == 3){
-                endTime = larguraRua/velocidadeAndando;
+    //     if(transform.position.z < meioDaRua){
+    //         if (Manager.Instance.passagemPerto == 2 || Manager.Instance.passagemPerto == 3){
+    //             endTime = larguraRua/velocidadeAndando;
                 
-            }
-            else {
-                endTime = larguraRua/velocidadeJogador;
+    //         }
+    //         else {
+    //             endTime = larguraRua/velocidadeJogador;
                 
-            }
-            if(currentTime < endTime){
-            currentTime += Time.deltaTime;
-            lerpPercent = currentTime / endTime;
-            transform.position = Vector3.Lerp(oldPosition, middlePosition, lerpPercent);
-        } 
-        } 
-        else {
+    //         }
+    //         if(currentTime < endTime){
+    //         currentTime += Time.deltaTime;
+    //         lerpPercent = currentTime / endTime;
+    //         transform.position = Vector3.Lerp(oldPosition, middlePosition, lerpPercent);
+    //     } 
+    //     } 
+    //     else {
             
-            if (Manager.Instance.passagemLonge == 2){
-                endTime = larguraRua/velocidadeAndando;
-            }
-            else {
-                endTime = larguraRua/velocidadeJogador;
-            }
-        }
+    //         if (Manager.Instance.passagemLonge == 2){
+    //             endTime = larguraRua/velocidadeAndando;
+    //         }
+    //         else {
+    //             endTime = larguraRua/velocidadeJogador;
+    //         }
+    //     }
 
-        if(currentTime < endTime){
-            currentTime += Time.deltaTime;
-            lerpPercent = currentTime / endTime;
-            transform.position = Vector3.Lerp(oldPosition, newPosition, lerpPercent);
-        } 
-        else {
-            transform.position = Vector3.Lerp(oldPosition, newPosition, 1);
-            setAtravessando(false);
-            StartCoroutine(chamarEndMenu());
-            Debug.Log("Jogo Acabou, Menu Em 5 Segundos");
-        }
-    }
+    //     if(currentTime < endTime){
+    //         currentTime += Time.deltaTime;
+    //         lerpPercent = currentTime / endTime;
+    //         transform.position = Vector3.Lerp(oldPosition, newPosition, lerpPercent);
+    //     } 
+    //     else {
+    //         transform.position = Vector3.Lerp(oldPosition, newPosition, 1);
+    //         setAtravessando(false);
+    //         StartCoroutine(chamarEndMenu());
+    //         Debug.Log("Jogo Acabou, Menu Em 5 Segundos");
+    //     }
+    // }
 
     public void PararCarros(){
 
@@ -300,9 +300,11 @@ public class PlayerController : MonoBehaviour
             somCarro.Stop();
             AudioSource.PlayClipAtPoint(somFreio, carro.transform.position,4.0f);
         }
-        setMovimento(false);
-        StartCoroutine(chamarEndMenu());
-        Debug.Log("Jogo Acabou, Menu Em 5 Segundos");
+        // pegar posição, salvar faixa e que ocorrou acidente
+        Manager.Instance.faixaAcidente = transform.position.z <= meioDaRua ? 0 : 1; // Acidente primeira faixa 0 / segunda 1
+        Manager.Instance.houveAcidente = 1; // houve acidente
+
+        ConcluirSimulacao();
     }
 
     void SalvarDadosDecisaoAtravessar()
@@ -332,6 +334,12 @@ public class PlayerController : MonoBehaviour
 
         // se acelerou enquanto estava atravessando
 
+    }
+
+    void SalvarDadosConclusao()
+    {
+        // quantos carros passaram enquanto atravessava
+        Manager.Instance.quantidadeDeCarrosEnquantoAtravessava = contCarros.quantidade - Manager.Instance.quantidadeDeCarrosQueJaPassaram;
     }
 
     void SalvarDistanciaCarroMaisProximo(){ // guarda a distancia e faixa do carro mais proximo no singleton
@@ -374,8 +382,16 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator chamarEndMenu()
     {
+        Debug.Log("Jogo Acabou, Menu Em 5 Segundos");
         yield return new WaitForSeconds(5);
-        // SceneManager.LoadScene("EndMenu");
+        SceneManager.LoadScene("EndMenu");
     }
 
+    void ConcluirSimulacao(){
+        setMovimento(false);
+        SalvarDadosConclusao();
+        Manager.Instance.printAll();
+        // StartCoroutine(chamarEndMenu());
+        
+    }
 }

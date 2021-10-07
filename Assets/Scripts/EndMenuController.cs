@@ -33,56 +33,56 @@ public class EndMenuController : MonoBehaviour {
 		{
 			cruzamento.text = "Você não atravessou na faixa de pedestres.";
 		}
-		if (Manager.Instance.passagemPerto == 0 || Manager.Instance.passagemLonge == 0)
-		{
-			resultado.text = "Você sofreu um acidente!";
-		}
-		else if (Manager.Instance.passagemPerto == 1 || Manager.Instance.passagemLonge == 1)
-		{
-			resultado.text = "Você quase sofreu um acidente!";
-		}
-		else if (Manager.Instance.passagemPerto == 2)
-		{
-			resultado.text = "Você passou andando, mas a travessia não foi segura!";
-		}
-		else if (Manager.Instance.cruzamentoCorreto == 0)
-		{
-			resultado.text = "Você passou andando, mas a travessia não foi segura!";
-		}
-		else
-		{
-			resultado.text = "Você atravessou a rua com segurança!";
-		}
+		// if (Manager.Instance.passagemPerto == 0 || Manager.Instance.passagemLonge == 0)
+		// {
+		// 	resultado.text = "Você sofreu um acidente!";
+		// }
+		// else if (Manager.Instance.passagemPerto == 1 || Manager.Instance.passagemLonge == 1)
+		// {
+		// 	resultado.text = "Você quase sofreu um acidente!";
+		// }
+		// else if (Manager.Instance.passagemPerto == 2)
+		// {
+		// 	resultado.text = "Você passou andando, mas a travessia não foi segura!";
+		// }
+		// else if (Manager.Instance.cruzamentoCorreto == 0)
+		// {
+		// 	resultado.text = "Você passou andando, mas a travessia não foi segura!";
+		// }
+		// else
+		// {
+		// 	resultado.text = "Você atravessou a rua com segurança!";
+		// }
 
-		if (Manager.Instance.passagemPerto == 0)
-		{
-			perto.text = "Você bateu no carro da faixa mais próxima.";
-		}
-		else if (Manager.Instance.passagemPerto == 1)
-		{
-			perto.text = "Você quase bateu no carro da faixa mais próxima.";
-		}
-		else if (Manager.Instance.passagemPerto == 2)
-		{
-			perto.text = "Você passou andando da faixa mais próxima, mas a travessia não foi segura.";
-		}
-		else if (Manager.Instance.passagemPerto == 3)
-		{
-			perto.text = "Você passou andando da faixa mais próxima.";
-		}
+		// if (Manager.Instance.passagemPerto == 0)
+		// {
+		// 	perto.text = "Você bateu no carro da faixa mais próxima.";
+		// }
+		// else if (Manager.Instance.passagemPerto == 1)
+		// {
+		// 	perto.text = "Você quase bateu no carro da faixa mais próxima.";
+		// }
+		// else if (Manager.Instance.passagemPerto == 2)
+		// {
+		// 	perto.text = "Você passou andando da faixa mais próxima, mas a travessia não foi segura.";
+		// }
+		// else if (Manager.Instance.passagemPerto == 3)
+		// {
+		// 	perto.text = "Você passou andando da faixa mais próxima.";
+		// }
 
-		if (Manager.Instance.passagemLonge == 0)
-		{
-			longe.text = "Você bateu no carro da faixa mais distante.";
-		}
-		else if (Manager.Instance.passagemLonge == 1)
-		{
-			longe.text = "Você quase bateu no carro da faixa mais distante.";
-		}
-		else if (Manager.Instance.passagemLonge == 2)
-		{
-			longe.text = "Você passou andando da faixa mais distante.";
-		}
+		// if (Manager.Instance.passagemLonge == 0)
+		// {
+		// 	longe.text = "Você bateu no carro da faixa mais distante.";
+		// }
+		// else if (Manager.Instance.passagemLonge == 1)
+		// {
+		// 	longe.text = "Você quase bateu no carro da faixa mais distante.";
+		// }
+		// else if (Manager.Instance.passagemLonge == 2)
+		// {
+		// 	longe.text = "Você passou andando da faixa mais distante.";
+		// }
 		
 		
 
