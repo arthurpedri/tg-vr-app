@@ -29,7 +29,11 @@ public class PlayerController : MonoBehaviour
     public float currentTime = 0;
     public AudioClip somFreio;
     DateTime tempoInicialCena;
+    DateTime ultimaOlhadaEsquerda, ultimaOlhadaDireita;
     public ContadorCarros contCarros;
+    bool olhandoEsquerda = false, olhandoDireita = false;
+    int olhadasEsquerda = 0, olhadasDireita = 0;
+    Transform camera;
     
     
 
@@ -47,10 +51,10 @@ public class PlayerController : MonoBehaviour
         transform.position = transform.position - new Vector3(0, 1.8f, 0);
         transform.position = transform.position + new Vector3(0, Manager.Instance.altura, 0);
 
+        camera = transform.Find("Main Camera");
+
         emMovimento = true;
 
-        cruzamentoPos = cruzamento.transform.position.x;
-        Manager.Instance.distanciaCruzamento = Mathf.Abs(cruzamentoPos - transform.position.x);
     }
 
     void Update()
@@ -62,6 +66,9 @@ public class PlayerController : MonoBehaviour
             PrepararTravessia();
         }
 
+        // checa rotação da camera
+        ChecaOlhar();
+
         if (atravessando)
         {
             if(emMovimento){
@@ -72,10 +79,12 @@ public class PlayerController : MonoBehaviour
 
         }
 
+         
+
+
 
         //update the position
         transform.position = transform.position + new Vector3(horizontalInput * velocidadeAndando * Time.deltaTime, 0, 0);
-        Manager.Instance.distanciaCruzamento = Mathf.Abs(cruzamentoPos - transform.position.x);
 
     }
 
@@ -286,7 +295,7 @@ public class PlayerController : MonoBehaviour
     //     else {
     //         transform.position = Vector3.Lerp(oldPosition, newPosition, 1);
     //         setAtravessando(false);
-    //         StartCoroutine(chamarEndMenu());
+    //         StartCoroutine(ChamarEndMenu());
     //         Debug.Log("Jogo Acabou, Menu Em 5 Segundos");
     //     }
     // }
@@ -324,11 +333,33 @@ public class PlayerController : MonoBehaviour
         SalvarDistanciaCarroMaisProximo();
 
         // quantos segundos jogador demorou para decidir atravessar
-        TimeSpan ts = DateTime.Now.Subtract(tempoInicialCena);
+        DateTime now = DateTime.Now;
+        TimeSpan ts = now.Subtract(tempoInicialCena);
         Manager.Instance.tempoParaTomadaDeDecisao = ts.Seconds;
+
+        // segundos desde a ultima olhada para cada lado
+        if (ultimaOlhadaEsquerda != DateTime.MinValue){
+            ts = now.Subtract(ultimaOlhadaEsquerda);
+            Manager.Instance.ultimaOlhadaEsquerda = ts.Seconds;
+        } 
+        else {
+           Manager.Instance.ultimaOlhadaEsquerda = -1; 
+        }
+
+        if (ultimaOlhadaDireita != DateTime.MinValue){
+            ts = now.Subtract(ultimaOlhadaDireita);
+            Manager.Instance.ultimaOlhadaDireita = ts.Seconds;
+        } 
+        else {
+           Manager.Instance.ultimaOlhadaDireita = -1; 
+        }
 
         // quantos carros passaram até a travessia ocorrer
         Manager.Instance.quantidadeDeCarrosQueJaPassaram = contCarros.quantidade;
+
+        // quantidades de olhada antes de atravessar
+        Manager.Instance.quantidadeDeOlhadasEsquerda = olhadasEsquerda;
+        Manager.Instance.quantidadeDeOlhadasDireita = olhadasDireita;
 
         // velocidade escolhida para atravessar (primeira)
 
@@ -370,6 +401,53 @@ public class PlayerController : MonoBehaviour
         return (menorDistancia, faixa);
     }
 
+    // rotação da camera quando olha para os carros 325 x 20   E  300 y 240    D   60 y 120
+    void ChecaOlhar(){ 
+        // Debug.Log("Eu: " + camera.localEulerAngles + " Rot: " + camera.rotation);
+        // Debug.Log("E: " + CameraDentroCoordenadas(325, 20, 240, 300) + " D: " + CameraDentroCoordenadas(325, 20, 60, 120));
+
+        
+        
+        if (olhandoEsquerda){ // 325 <= x || x <= 20   E  300 y 240  
+            if (!CameraDentroCoordenadas(325, 20, 240, 300)){
+                olhandoEsquerda = false;
+            } 
+            else {
+                ultimaOlhadaEsquerda = DateTime.Now;
+            }
+        }
+        else {
+            if (CameraDentroCoordenadas(325, 20, 240, 300)){
+                olhandoEsquerda = true;
+                olhadasEsquerda += 1;
+            }
+        }
+        if (olhandoDireita){ // 325 x 20  D   60 y 120
+            if (!CameraDentroCoordenadas(325, 20, 60, 120)){
+                olhandoDireita = false;
+            }
+            else {
+                ultimaOlhadaDireita = DateTime.Now;
+            }
+        }
+        else {
+            if (CameraDentroCoordenadas(325, 20, 60, 120)){
+                olhandoDireita = true;
+                olhadasDireita += 1;
+            }
+        }
+    }
+
+    bool CameraDentroCoordenadas(float menorX, float maiorX, float menorY, float maiorY)
+    {
+        if (camera.localEulerAngles.x >= menorX || camera.localEulerAngles.x <= maiorX){
+            if (camera.localEulerAngles.y >= menorY && camera.localEulerAngles.y <= maiorY){
+                return true;
+            }
+        }
+        return false;
+    }
+
     void setAtravessando(bool valor)
     {
         atravessando = valor;
@@ -380,7 +458,7 @@ public class PlayerController : MonoBehaviour
         emMovimento = movimento;
     }
 
-    IEnumerator chamarEndMenu()
+    IEnumerator ChamarEndMenu()
     {
         Debug.Log("Jogo Acabou, Menu Em 5 Segundos");
         yield return new WaitForSeconds(5);
@@ -391,7 +469,7 @@ public class PlayerController : MonoBehaviour
         setMovimento(false);
         SalvarDadosConclusao();
         Manager.Instance.printAll();
-        // StartCoroutine(chamarEndMenu());
+        // StartCoroutine(ChamarEndMenu());
         
     }
 }

@@ -24,11 +24,16 @@ public class Manager : Singleton<Manager>
     public int quantidadeDeCarrosEnquantoAtravessava = 0;
     public int faixaAcidente = -1; // -1 nenhum acidente / 0 primeira / 1 segunda 
     public int houveAcidente = 0;
+    public int quantidadeDeOlhadasEsquerda = 0;
+    public int quantidadeDeOlhadasDireita = 0;
+    public int ultimaOlhadaEsquerda; // -1 nunca olhou
+    public int ultimaOlhadaDireita; // -1 nunca olhou
+    // (-30 < x < 20)  (-120 < y < -60) (60 < y < 120) 
 
     public void printAll()
     {
         // dados ambiente
-        Debug.Log("Velocidade Carros: " + defaultSpeed + " | Distancia Cruzamento: " + distanciaCruzamento + "Cruzamento Correto: " + cruzamentoCorreto);
+        Debug.Log("Velocidade Carros: " + defaultSpeed + " | Distancia Cruzamento: " + distanciaCruzamento + " | Cruzamento Correto: " + cruzamentoCorreto);
         Debug.Log("Período: " + periodo + " | Ambiente: " + ambiente + " | Dificuldade: " + dificuldade);
         Debug.Log("Nome: " + nome + " | Idade: " + idade + " | Altura: " + altura);
         Debug.Log("Timestamp: " + timestamp);
@@ -41,6 +46,7 @@ public class Manager : Singleton<Manager>
         // dados conclusao
         Debug.Log("Quantidade Carros Enquanto Atravessava: " + quantidadeDeCarrosEnquantoAtravessava);
         Debug.Log("Houve Acidente: " + houveAcidente + " | Faixa Acidente: " + faixaAcidente);
+        Debug.Log("Olhadas Esquerda: " + quantidadeDeOlhadasEsquerda + " | Ultima Olhada Esquerda: " + ultimaOlhadaEsquerda + " | Olhadas Direita: " + quantidadeDeOlhadasDireita + " | Ultima Olhada Direita: " + ultimaOlhadaDireita);
     }
 
 }
