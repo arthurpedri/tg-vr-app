@@ -56,7 +56,7 @@ public class MenuController : MonoBehaviour {
 		Manager.Instance.nome = Nome.text != "" ? Nome.text : "Nome Vazio"; // nome padrão Nome Vazio
 		Manager.Instance.idade = Idade.text != "" ? int.Parse(Idade.text) : 0; // idade padrão 0
 		Manager.Instance.altura = Altura.text != "" ? float.Parse(Altura.text) / 100 : 1.8f;  // altura padrão 1.8
-		Manager.Instance.timestamp = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
+		
 		// Manager.Instance.printAll();
         SceneManager.LoadScene (cena);
     }

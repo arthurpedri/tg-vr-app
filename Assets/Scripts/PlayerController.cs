@@ -47,6 +47,9 @@ public class PlayerController : MonoBehaviour
         currentTime = 0;
 
         tempoInicialCena = DateTime.Now;
+        Manager.Instance.ResetarDadosSimulacao();
+
+        Manager.Instance.timestamp = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
 
         transform.position = transform.position - new Vector3(0, 1.8f, 0);
         transform.position = transform.position + new Vector3(0, Manager.Instance.altura, 0);
@@ -468,7 +471,7 @@ public class PlayerController : MonoBehaviour
     void ConcluirSimulacao(){
         setMovimento(false);
         SalvarDadosConclusao();
-        Manager.Instance.printAll();
+        Manager.Instance.SalvarBancoDeDados();
         // StartCoroutine(ChamarEndMenu());
         
     }
