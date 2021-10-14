@@ -52,7 +52,7 @@ public class PlayerController : MonoBehaviour
         Manager.Instance.timestamp = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
 
         transform.position = transform.position - new Vector3(0, 1.8f, 0);
-        transform.position = transform.position + new Vector3(0, Manager.Instance.altura, 0);
+        transform.position = transform.position + new Vector3(0, Manager.Instance.altura/100f, 0);
 
         camera = transform.Find("Main Camera");
 
@@ -472,7 +472,7 @@ public class PlayerController : MonoBehaviour
         setMovimento(false);
         SalvarDadosConclusao();
         Manager.Instance.SalvarBancoDeDados();
-        // StartCoroutine(ChamarEndMenu());
+        StartCoroutine(ChamarEndMenu());
         
     }
 }

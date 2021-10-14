@@ -9,7 +9,8 @@ using System.IO;
 public class Manager : Singleton<Manager>
 {
     // configurações de ambiente
-    public float defaultSpeed = 100/3.6f; // em m/s 16.66f
+    public int velocidadeKm = 60;
+    public float defaultSpeed = 60/3.6f; // em m/s 16.66f
     // public int passagemLonge; // -1 bug / 0 bateu / 1 correndo / 2 andando
     // public int passagemPerto; // -1 bug / 0 bateu / 1 correndo / 2 andando perigoso / 3 andando tranquilo
     public int cruzamentoCorreto = -1; // -1 bug / 0 errado / 1 correto
@@ -18,7 +19,7 @@ public class Manager : Singleton<Manager>
     public string dificuldade = "Mão Simples";
     public string nome = "Nome Vazio";
     public int idade = 0;
-    public float altura = 1.8f;
+    public int altura = 180;
 
     // guarda no start da cena
     public string timestamp;
@@ -100,6 +101,7 @@ public class Manager : Singleton<Manager>
 
         
         LinhaDB novalinhajson = new LinhaDB();
+        SalvarLinha(novalinhajson); // salva informações do manager na linha que vai ser adicionada
 
         banco.Table.Add(novalinhajson);
 
@@ -109,6 +111,33 @@ public class Manager : Singleton<Manager>
 
         
 
+    }
+
+    public void SalvarLinha(LinhaDB linha)
+    {
+        linha.velocidade = Manager.Instance.velocidadeKm;
+        linha.cruzamentoCorreto = Manager.Instance.cruzamentoCorreto;
+        linha.periodo = Manager.Instance.periodo; 
+        linha.ambiente = Manager.Instance.ambiente;
+        linha.dificuldade = Manager.Instance.dificuldade;
+        linha.nome = Manager.Instance.nome;
+        linha.idade = Manager.Instance.idade;
+        linha.altura = Manager.Instance.altura;
+
+        linha.timestamp = Manager.Instance.timestamp;
+
+        linha.distanciaCruzamento = Math.Round((decimal)Manager.Instance.distanciaCruzamento, 2).ToString(); 
+        linha.distanciaCarroMaisProximo = Math.Round((decimal)Manager.Instance.distanciaCarroMaisProximo, 2).ToString();
+        linha.faixaCarroMaisProximo = Manager.Instance.faixaCarroMaisProximo;
+        linha.tempoParaTomadaDeDecisao = Manager.Instance.tempoParaTomadaDeDecisao;
+        linha.quantidadeDeCarrosQueJaPassaram = Manager.Instance.quantidadeDeCarrosQueJaPassaram;
+        linha.quantidadeDeCarrosEnquantoAtravessava = Manager.Instance.quantidadeDeCarrosEnquantoAtravessava;
+        linha.faixaAcidente = Manager.Instance.faixaAcidente;
+        linha.houveAcidente = Manager.Instance.houveAcidente;
+        linha.quantidadeDeOlhadasEsquerda = Manager.Instance.quantidadeDeOlhadasEsquerda;
+        linha.quantidadeDeOlhadasDireita = Manager.Instance.quantidadeDeOlhadasDireita;
+        linha.ultimaOlhadaEsquerda = Manager.Instance.ultimaOlhadaEsquerda;
+        linha.ultimaOlhadaDireita = Manager.Instance.ultimaOlhadaDireita;
     }
 
 
@@ -130,7 +159,7 @@ public class BancoDeDados
 [System.Serializable]
 public class LinhaDB
 {
-    public string defaultSpeed; // em m/s 16.66f
+    public int velocidade; // em km/h
     // public int passagemLonge; // -1 bug / 0 bateu / 1 correndo / 2 andando
     // public int passagemPerto; // -1 bug / 0 bateu / 1 correndo / 2 andando perigoso / 3 andando tranquilo
     public int cruzamentoCorreto = -1; // -1 bug / 0 errado / 1 correto
@@ -139,7 +168,7 @@ public class LinhaDB
     public string dificuldade = "Mão Simples";
     public string nome = "Nome Vazio";
     public int idade = 0;
-    public string altura;
+    public int altura;
 
     // guarda no start da cena
     public string timestamp;
@@ -158,30 +187,4 @@ public class LinhaDB
     public int ultimaOlhadaEsquerda = -1; // -1 nunca olhou
     public int ultimaOlhadaDireita = -1; // -1 nunca olhou
 
-    public LinhaDB()
-    {
-            defaultSpeed = Math.Round((decimal)Manager.Instance.defaultSpeed, 2).ToString(); 
-            cruzamentoCorreto = Manager.Instance.cruzamentoCorreto;
-            periodo = Manager.Instance.periodo; 
-            ambiente = Manager.Instance.ambiente;
-            dificuldade = Manager.Instance.dificuldade;
-            nome = Manager.Instance.nome;
-            idade = Manager.Instance.idade;
-            altura = Math.Round((decimal)Manager.Instance.altura, 2).ToString();
-
-            timestamp = Manager.Instance.timestamp;
-
-            distanciaCruzamento = Math.Round((decimal)Manager.Instance.distanciaCruzamento, 2).ToString(); 
-            distanciaCarroMaisProximo = Math.Round((decimal)Manager.Instance.distanciaCarroMaisProximo, 2).ToString();
-            faixaCarroMaisProximo = Manager.Instance.faixaCarroMaisProximo;
-            tempoParaTomadaDeDecisao = Manager.Instance.tempoParaTomadaDeDecisao;
-            quantidadeDeCarrosQueJaPassaram = Manager.Instance.quantidadeDeCarrosQueJaPassaram;
-            quantidadeDeCarrosEnquantoAtravessava = Manager.Instance.quantidadeDeCarrosEnquantoAtravessava;
-            faixaAcidente = Manager.Instance.faixaAcidente;
-            houveAcidente = Manager.Instance.houveAcidente;
-            quantidadeDeOlhadasEsquerda = Manager.Instance.quantidadeDeOlhadasEsquerda;
-            quantidadeDeOlhadasDireita = Manager.Instance.quantidadeDeOlhadasDireita;
-            ultimaOlhadaEsquerda = Manager.Instance.ultimaOlhadaEsquerda;
-            ultimaOlhadaDireita = Manager.Instance.ultimaOlhadaDireita;
-    }
 }

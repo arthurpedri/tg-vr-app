@@ -10,7 +10,7 @@ public class MenuController : MonoBehaviour {
 	public GameObject inicial, menuopcoes;
 
 	// Botões de interação
-	public Button Jogar, Opcoes, Voltar;
+	public Button Jogar, Opcoes, Voltar, Exportar;
 
 	// Velocidade carros
 	public Slider VelocidadeSlider;
@@ -34,6 +34,7 @@ public class MenuController : MonoBehaviour {
         XRSettings.enabled = false;
 
 		Jogar.onClick.AddListener(delegate {LoadScene("PrimeiraCena"); });
+		Exportar.onClick.AddListener(delegate {LoadScene("ExportarMenu"); });
 		Opcoes.onClick.AddListener(LoadOpcoes);
 		Voltar.onClick.AddListener(LoadInicial);
 		VelocidadeSlider.onValueChanged.AddListener(delegate {changeSpeed(); });
@@ -55,7 +56,7 @@ public class MenuController : MonoBehaviour {
 		// salvar informações do jogo
 		Manager.Instance.nome = Nome.text != "" ? Nome.text : "Nome Vazio"; // nome padrão Nome Vazio
 		Manager.Instance.idade = Idade.text != "" ? int.Parse(Idade.text) : 0; // idade padrão 0
-		Manager.Instance.altura = Altura.text != "" ? float.Parse(Altura.text) / 100 : 1.8f;  // altura padrão 1.8
+		Manager.Instance.altura = Altura.text != "" ? int.Parse(Altura.text) : 180;  // altura padrão 180
 		
 		// Manager.Instance.printAll();
         SceneManager.LoadScene (cena);
@@ -69,8 +70,10 @@ public class MenuController : MonoBehaviour {
 
 	public void changeSpeed()
 	{
-		float speed = VelocidadeSlider.value * 20; // slider tem valores baixos, é incrementado em 1
+		int speed = (int)VelocidadeSlider.value * 20; // slider tem valores baixos, é incrementado em 1
 		VelocidadeCarrosText.text = "Velocidade dos carros: " + speed + "km/h";
+		Debug.Log(speed);
+		Manager.Instance.velocidadeKm = speed;
 		Manager.Instance.defaultSpeed = speed / 3.6f;
 		// Debug.Log(Manager.Instance.defaultSpeed);
 	}
