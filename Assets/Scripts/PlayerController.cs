@@ -33,7 +33,7 @@ public class PlayerController : MonoBehaviour
     public ContadorCarros contCarros;
     bool olhandoEsquerda = false, olhandoDireita = false;
     int olhadasEsquerda = 0, olhadasDireita = 0;
-    Transform camera;
+    public GameObject camera;
     
     
 
@@ -54,7 +54,6 @@ public class PlayerController : MonoBehaviour
         transform.position = transform.position - new Vector3(0, 1.8f, 0);
         transform.position = transform.position + new Vector3(0, Manager.Instance.altura/100f, 0);
 
-        camera = transform.Find("Main Camera");
 
         emMovimento = true;
 
@@ -113,8 +112,8 @@ public class PlayerController : MonoBehaviour
             // testando o caso de bater na frente do carro
             if ((carro.transform.position.z - hitboxLarguraCarro/2) <= transform.position.z && transform.position.z <= (carro.transform.position.z + hitboxLarguraCarro/2)){ // 
                 if (Mathf.Abs((carro.transform.position.x + sentidoRua * comprimentoCarro/2) - transform.position.x) <= 1.5){ // carro vai parar a 1.5 unidade de distancia
-                    Debug.Log("Player x: "+transform.position.x + " z: " + transform.position.z);
-                    Debug.Log("Carro x: "+ (carro.transform.position.x + comprimentoCarro/2) + " z: " + (carro.transform.position.z + hitboxLarguraCarro/2));
+                    // Debug.Log("Player x: "+transform.position.x + " z: " + transform.position.z);
+                    // Debug.Log("Carro x: "+ (carro.transform.position.x + comprimentoCarro/2) + " z: " + (carro.transform.position.z + hitboxLarguraCarro/2));
                     PararCarros();
                     // Debug.Log("Bateu na frente");
                     return;
@@ -443,8 +442,8 @@ public class PlayerController : MonoBehaviour
 
     bool CameraDentroCoordenadas(float menorX, float maiorX, float menorY, float maiorY)
     {
-        if (camera.localEulerAngles.x >= menorX || camera.localEulerAngles.x <= maiorX){
-            if (camera.localEulerAngles.y >= menorY && camera.localEulerAngles.y <= maiorY){
+        if (camera.transform.localEulerAngles.x >= menorX || camera.transform.localEulerAngles.x <= maiorX){
+            if (camera.transform.localEulerAngles.y >= menorY && camera.transform.localEulerAngles.y <= maiorY){
                 return true;
             }
         }
@@ -463,8 +462,8 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator ChamarEndMenu()
     {
-        Debug.Log("Jogo Acabou, Menu Em 5 Segundos");
-        yield return new WaitForSeconds(5);
+        Debug.Log("Jogo Acabou, Menu Em 3 Segundos");
+        yield return new WaitForSeconds(3);
         SceneManager.LoadScene("EndMenu");
     }
 

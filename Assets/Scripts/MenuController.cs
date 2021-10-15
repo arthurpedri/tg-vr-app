@@ -46,10 +46,6 @@ public class MenuController : MonoBehaviour {
 		menuopcoes.SetActive(false); // começando com o menu de opcoes desativado
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
 	public void LoadScene(string cena)
     {

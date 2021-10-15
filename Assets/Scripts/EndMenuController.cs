@@ -15,7 +15,7 @@ public class EndMenuController : MonoBehaviour {
 	void Start () {
 
 		
-		Screen.orientation = ScreenOrientation.AutoRotation ; // parando VR para o menu
+		// Screen.orientation = ScreenOrientation.AutoRotation ; // parando VR para o menu
         XRSettings.enabled = false;
 
 		if (Manager.Instance.houveAcidente == 1)
@@ -32,10 +32,6 @@ public class EndMenuController : MonoBehaviour {
 		Exportar.onClick.AddListener(delegate {LoadScene("ExportarMenu"); });
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
 	public void LoadScene(string cena)
     {

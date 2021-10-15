@@ -74,14 +74,127 @@ public class Manager : Singleton<Manager>
             ultimaOlhadaDireita = -1; // -1 nunca olhou
     }
 
+    public string CriarArquivoParaExportar()
+    {
+        BancoDeDados banco = PegarBancoDeDados();
+
+        string header = "Data(AAAA/MM/DD H:m)," +
+                        "Nome," +
+                        "Idade," +
+                        "Altura(cm)," +
+
+                        "Velocidade(km/h)," +
+                        "Ambiente," +
+                        "Período," +
+                        "Dificuldade," +
+
+                        "Houve acidente?," +
+                        "Faixa do acidente," +
+                        "Cruzamento na faixa?," +
+                        "Distância da faixa(m)," +
+                        "Distância carro mais próximo(m)," +
+                        "Faixa carro mais próximo," +
+                        "Tempo até atravessar(s)," +
+                        "Qtd. de carros que passaram," +
+                        "Qtd. de carros enquanto atravessava," +
+                        "Qtd. de olhadas esquerda," +
+                        "Qtd. de olhadas direita," +
+                        "Última olhada esquerda(s)," +
+                        "Última olhada direita(s)" +
+                        "\n"        
+                        ;
+
+
+        // linha.timestamp 
+        // linha.nome 
+        // linha.idade 
+        // linha.altura
+
+        // linha.velocidade 
+        // linha.ambiente 
+        // linha.periodo  
+        // linha.dificuldade 
+
+        // linha.houveAcidente 
+        // linha.faixaAcidente 
+        // linha.cruzamentoCorreto 
+        // linha.distanciaCruzamento
+        // linha.distanciaCarroMaisProximo 
+        // linha.faixaCarroMaisProximo 
+        // linha.tempoParaTomadaDeDecisao 
+        // linha.quantidadeDeCarrosQueJaPassaram 
+        // linha.quantidadeDeCarrosEnquantoAtravessava 
+        // linha.quantidadeDeOlhadasEsquerda 
+        // linha.quantidadeDeOlhadasDireita 
+        // linha.ultimaOlhadaEsquerda 
+        // linha.ultimaOlhadaDireita 
+        // 21
+
+        string corpo = "";
+        
+        foreach (LinhaDB linha in banco.Table)
+        {
+            corpo += 
+                    linha.timestamp + "," +
+                    linha.nome + "," +
+                    linha.idade + "," +
+                    linha.altura + "," +
+                    linha.velocidade + "," +
+                    linha.ambiente + "," +
+                    linha.periodo + "," +
+                    linha.dificuldade + "," +
+                    linha.houveAcidente + "," +
+                    linha.faixaAcidente + "," +
+                    linha.cruzamentoCorreto + "," +
+                    linha.distanciaCruzamento + "," +
+                    linha.distanciaCarroMaisProximo + "," +
+                    linha.faixaCarroMaisProximo + "," +
+                    linha.tempoParaTomadaDeDecisao + "," +
+                    linha.quantidadeDeCarrosQueJaPassaram + "," +
+                    linha.quantidadeDeCarrosEnquantoAtravessava + "," +
+                    linha.quantidadeDeOlhadasEsquerda + "," +
+                    linha.quantidadeDeOlhadasDireita + "," +
+                    linha.ultimaOlhadaEsquerda + "," +
+                    linha.ultimaOlhadaDireita
+                    ;
+
+            corpo += "\n";
+        }
+        string caminhoArquivo = PegarCaminhoNovoArquivo();
+        try {
+            File.WriteAllText(caminhoArquivo, header + corpo);
+
+        } 
+        catch {
+            Debug.Log("Erro caminho csv");
+            caminhoArquivo = "erro";
+        }
+        return caminhoArquivo;
+    }
+
     public void SalvarBancoDeDados()
     {
-        // caminho para o arquivo de banco de dados
-        string diretorio = Application.dataPath + "/saves/";
-        if (!Directory.Exists(diretorio))
-				Directory.CreateDirectory(diretorio);
-        string caminhoArquivo = diretorio + "db.json";
+        BancoDeDados banco = PegarBancoDeDados();
 
+
+        LinhaDB novalinhajson = new LinhaDB();
+
+        SalvarLinha(novalinhajson); // salva informações do manager na linha que vai ser adicionada
+
+        banco.Table.Add(novalinhajson);
+
+        string json = JsonUtility.ToJson(banco, true);
+
+        File.WriteAllText(PegarCaminhoBanco(), json);
+
+        
+
+    }
+
+    public BancoDeDados PegarBancoDeDados()
+    {
+        // caminho para o arquivo de banco de dados
+        string caminhoArquivo = PegarCaminhoBanco();
 
         string arquivo;
         BancoDeDados banco;
@@ -97,20 +210,33 @@ public class Manager : Singleton<Manager>
             banco = new BancoDeDados();
         }
 
-        
+        return banco;
+    }
+    
+    string PegarCaminhoBanco()
+    {
+        return PegarDiretorio() + "db.json";
+    }
 
-        
-        LinhaDB novalinhajson = new LinhaDB();
-        SalvarLinha(novalinhajson); // salva informações do manager na linha que vai ser adicionada
+    string PegarCaminhoNovoArquivo()
+    {
+        string data = DateTime.Now.ToString("yyyyMMdd_HHmm");
+        return PegarDiretorio() + "DTransito" + data + ".csv";
+    }
 
-        banco.Table.Add(novalinhajson);
+    public string PegarDiretorio()
+    {
+        string diretorio;
+        #if UNITY_EDITOR
+        diretorio = Application.dataPath + "/saves/";
+        #else
+        diretorio = Application.persistentDataPath + "/";
+        #endif
 
-        string json = JsonUtility.ToJson(banco, true);
+        if (!Directory.Exists(diretorio))
+				Directory.CreateDirectory(diretorio);
 
-        File.WriteAllText(caminhoArquivo, json);
-
-        
-
+        return diretorio;
     }
 
     public void SalvarLinha(LinhaDB linha)

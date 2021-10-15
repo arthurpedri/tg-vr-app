@@ -867,6 +867,7 @@ MonoBehaviour:
   currentTime: 0
   somFreio: {fileID: 8300000, guid: 344338ae47913c54c89b0f92e9dd9200, type: 3}
   contCarros: {fileID: 1881870051}
+  camera: {fileID: 963194225}
 --- !u!4 &279069899 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 482052, guid: 3d07cccf700f98844b32a80481e3f153,
