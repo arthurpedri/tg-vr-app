@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour
     private bool emMovimento = false; // carros em movimento
     public GameObject cruzamento;
     public GameObject[] carros;
+    public GameObject cars;
     GameObject carroQueBate;
     public Vector3 oldPosition; // comeco da travessia
     public Vector3 middlePosition; // metade da travessia
@@ -107,24 +108,24 @@ public class PlayerController : MonoBehaviour
 
     public void CalculoColisao()
     {
-        foreach (GameObject carro in carros)
+        foreach (Transform carro in cars.transform)
         {
             // testando o caso de bater na frente do carro
-            if ((carro.transform.position.z - hitboxLarguraCarro/2) <= transform.position.z && transform.position.z <= (carro.transform.position.z + hitboxLarguraCarro/2)){ // 
-                if (Mathf.Abs((carro.transform.position.x + sentidoRua * comprimentoCarro/2) - transform.position.x) <= 1.5){ // carro vai parar a 1.5 unidade de distancia
+            if ((carro.position.z - hitboxLarguraCarro/2) <= transform.position.z && transform.position.z <= (carro.position.z + hitboxLarguraCarro/2)){ // 
+                if (Mathf.Abs((carro.position.x + sentidoRua * comprimentoCarro/2) - transform.position.x) <= 1.5){ // carro vai parar a 1.5 unidade de distancia
                     // Debug.Log("Player x: "+transform.position.x + " z: " + transform.position.z);
-                    // Debug.Log("Carro x: "+ (carro.transform.position.x + comprimentoCarro/2) + " z: " + (carro.transform.position.z + hitboxLarguraCarro/2));
+                    // Debug.Log("Carro x: "+ (carro.position.x + comprimentoCarro/2) + " z: " + (carro.position.z + hitboxLarguraCarro/2));
                     PararCarros();
                     // Debug.Log("Bateu na frente");
                     return;
                 }
             }
             // testando o caso de bater no lado do carro
-            if ((Mathf.Abs(carro.transform.position.z - hitboxLarguraCarro/2) - transform.position.z) < 1.5){ 
-                if ((carro.transform.position.x - comprimentoCarro/2) <= 
-                transform.position.x && transform.position.x <= (carro.transform.position.x + comprimentoCarro/2)){//voce esta do lado do carro
-                    if (Mathf.Abs(transform.position.x - (carro.transform.position.x - sentidoRua * comprimentoCarro/2)) / Manager.Instance.defaultSpeed >= // tempo que o carro leva para passar a traseira pelo ponto onde esta o jogador deve ser maior ou igual do que o tempo que o jogador leva para chegar até o carro para colidir
-                    (Mathf.Abs((carro.transform.position.z - hitboxLarguraCarro/2) - transform.position.z)) // distancia do jogador ate o carro 
+            if ((Mathf.Abs(carro.position.z - hitboxLarguraCarro/2) - transform.position.z) < 1.5){ 
+                if ((carro.position.x - comprimentoCarro/2) <= 
+                transform.position.x && transform.position.x <= (carro.position.x + comprimentoCarro/2)){//voce esta do lado do carro
+                    if (Mathf.Abs(transform.position.x - (carro.position.x - sentidoRua * comprimentoCarro/2)) / Manager.Instance.defaultSpeed >= // tempo que o carro leva para passar a traseira pelo ponto onde esta o jogador deve ser maior ou igual do que o tempo que o jogador leva para chegar até o carro para colidir
+                    (Mathf.Abs((carro.position.z - hitboxLarguraCarro/2) - transform.position.z)) // distancia do jogador ate o carro 
                     / velocidadeJogador){  
                         PararCarros();
                         // Debug.Log("Bateu no meio");
@@ -135,81 +136,6 @@ public class PlayerController : MonoBehaviour
             
         }
     }
-
-    // public void oldCalculoColisao()
-    // {
-
-    //     distanciaPerto = Mathf.Infinity;
-    //     distanciaLonge = Mathf.Infinity;
-    //     Manager.Instance.passagemLonge = -1;
-    //     Manager.Instance.passagemPerto = -1;
-    //     Manager.Instance.cruzamentoCorreto = -1;
-    //     foreach (GameObject carro in carros)
-    //     {
-    //         //    TODO   tratar casos de carros grudados no jogador (muito proximos do x do player)
-    //         if ((carro.transform.position.x + comprimentoCarro/2) < transform.position.x) // carro esta na esquerda   |  posicao carro + comprimentoCarro/2 é o nariz do carro
-    //         {
-    //             distanciaCarroX = Mathf.Abs((carro.transform.position.x + comprimentoCarro/2) - transform.position.x); // distancia do carro com o jogador no eixo X
-    //             if (carro.transform.position.z < meioDaRua && distanciaPerto > distanciaCarroX) // lado perto (posicao z < meioDaRua) e carro mais proximo ate agora
-    //             {
-    //                 distanciaPerto = distanciaCarroX;
-    //                 if (distanciaCarroX / Manager.Instance.defaultSpeed > larguraRua / velocidadeAndando) // passou andando sem carro passar por tras enquanto na rua (inicialmente era 7.2s, avaliar o pq disso)
-    //                 {
-    //                     Manager.Instance.passagemPerto = 3;
-    //                 }
-    //                 else if (distanciaCarroX / Manager.Instance.defaultSpeed > (larguraRua / 2) / velocidadeAndando) // passou andando  (larguraRua / 2) é o fim da primeira faixa
-    //                 {
-    //                     Manager.Instance.passagemPerto = 2;
-    //                 }
-    //                 else if (distanciaCarroX / Manager.Instance.defaultSpeed > (larguraRua / 2) / velocidadeJogador) // passou correndo 
-    //                 {
-    //                     Manager.Instance.passagemPerto = 1;
-    //                 }
-    //                 else // bateu
-    //                 {
-    //                     carroQueBate = carro; // sempre que um carro da primeira faixa bater ele será o carro que bate
-    //                     Manager.Instance.passagemPerto = 0;
-
-    //                 }
-    //             }
-    //             if (carro.transform.position.z >= meioDaRua && distanciaLonge > distanciaCarroX) // lado longe da rua e carro mais proximo ate agora
-    //             {
-    //                 distanciaLonge = distanciaCarroX;
-    //                 if (distanciaCarroX / Manager.Instance.defaultSpeed > larguraRua / velocidadeAndando) // passou andando 
-    //                 {
-    //                     Manager.Instance.passagemLonge = 2;
-    //                 } 
-    //                 else if (distanciaCarroX / Manager.Instance.defaultSpeed > larguraRua / velocidadeJogador) // passou correndo 
-    //                 {
-    //                     Manager.Instance.passagemLonge = 1;
-    //                 }
-    //                 else // bateu
-    //                 {
-    //                     if (Manager.Instance.passagemPerto != 0){ // caso o carro da primeira faixa não bateu
-    //                         carroQueBate = carro;
-    //                     }
-    //                     Manager.Instance.passagemLonge = 0;
-    //                 }
-    //             }
-                
-    //         }
-            
-    //     }
-
-    //     if(Manager.Instance.distanciaCruzamento <= larguraFaixa / 2) // no cruzamento
-    //     {
-    //         Manager.Instance.cruzamentoCorreto = 1;
-    //     }
-    //     else
-    //     {
-    //         Manager.Instance.cruzamentoCorreto = 0;
-    //     }
-
-    //     PrepararTravessia();
-    //     Debug.Log("DistanciaPerto: " + distanciaPerto + "| DistanciaLonge: " + distanciaLonge);
-    //     Debug.Log("Perto: " + Manager.Instance.passagemPerto + " | Longe: " + Manager.Instance.passagemLonge + " | Cruzamento: " + Manager.Instance.cruzamentoCorreto);
-
-    // }
 
 
     public void Andar(int direcao) // -1 esquerda     1 direita
@@ -304,12 +230,12 @@ public class PlayerController : MonoBehaviour
 
     public void PararCarros(){
 
-        foreach (GameObject carro in carros)
+        foreach (Transform carro in cars.transform)
         {
-            carro.transform.GetComponent<Car>().setMovimento(false);
-            AudioSource somCarro = carro.transform.GetComponent<AudioSource>();
+            carro.GetComponent<Car>().setMovimento(false);
+            AudioSource somCarro = carro.GetComponent<AudioSource>();
             somCarro.Stop();
-            AudioSource.PlayClipAtPoint(somFreio, carro.transform.position,4.0f);
+            AudioSource.PlayClipAtPoint(somFreio, carro.position,4.0f);
         }
         // pegar posição, salvar faixa e que ocorrou acidente
         Manager.Instance.faixaAcidente = transform.position.z <= meioDaRua ? 0 : 1; // Acidente primeira faixa 0 / segunda 1
@@ -382,20 +308,20 @@ public class PlayerController : MonoBehaviour
     (float, int) DistanciaCarroMaisProximo(){
         float menorDistancia = Mathf.Infinity;
         int faixa = -1;
-        foreach (GameObject carro in carros){
+        foreach (Transform carro in cars.transform){
             if (carro.tag == "NasceEsqVaiDir"){
-                if (carro.transform.position.x + comprimentoCarro/2 <= transform.position.x){
-                    if (Mathf.Abs((carro.transform.position.x + comprimentoCarro/2) - transform.position.x) < menorDistancia){
-                        menorDistancia = Mathf.Abs((carro.transform.position.x + comprimentoCarro/2) - transform.position.x);
-                        faixa = carro.transform.position.z < meioDaRua ? 0 : 1;
+                if (carro.position.x + comprimentoCarro/2 <= transform.position.x){
+                    if (Mathf.Abs((carro.position.x + comprimentoCarro/2) - transform.position.x) < menorDistancia){
+                        menorDistancia = Mathf.Abs((carro.position.x + comprimentoCarro/2) - transform.position.x);
+                        faixa = carro.position.z < meioDaRua ? 0 : 1;
                     }
                 } 
             }
             else if (carro.tag == "NasceDirVaiEsq"){
-                if (carro.transform.position.x - comprimentoCarro/2 >= transform.position.x){
-                    if (Mathf.Abs((carro.transform.position.x - comprimentoCarro/2) - transform.position.x) < menorDistancia){
-                        menorDistancia = Mathf.Abs((carro.transform.position.x - comprimentoCarro/2) - transform.position.x);
-                        faixa = carro.transform.position.z < meioDaRua ? 0 : 1;
+                if (carro.position.x - comprimentoCarro/2 >= transform.position.x){
+                    if (Mathf.Abs((carro.position.x - comprimentoCarro/2) - transform.position.x) < menorDistancia){
+                        menorDistancia = Mathf.Abs((carro.position.x - comprimentoCarro/2) - transform.position.x);
+                        faixa = carro.position.z < meioDaRua ? 0 : 1;
                     }
                 }
             }
