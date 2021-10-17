@@ -7,6 +7,13 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
+    // constantes 
+    const string esqPraDireita = "NasceEsqVaiDir";  // tag para direcao do carro
+    const string dirPraEsquerda = "NasceDirVaiEsq";
+    const float posicaoZFaixa0 = 3.5f; // carros faixa 0: z=3.5   |   faixa 1: z=8
+    const float posicaoZFaixa1 = 8f;
+    const float posicaoXEsquerda = -250f;
+    const float posicaoXDireita = 250f;
     // velocidade em unidades/s  (m/s)
     float velocidadeAndando = 1.52f;
     float velocidadeJogador = 5.77f;
@@ -23,7 +30,7 @@ public class PlayerController : MonoBehaviour
     public GameObject cruzamento;
     public GameObject[] carros;
     public GameObject cars;
-    GameObject carroQueBate;
+    public GameObject carroPadrao; // carro padrao para ser copiado
     public Vector3 oldPosition; // comeco da travessia
     public Vector3 middlePosition; // metade da travessia
     public Vector3 newPosition; // destino da travessia
@@ -36,6 +43,8 @@ public class PlayerController : MonoBehaviour
     int olhadasEsquerda = 0, olhadasDireita = 0;
     public GameObject camera;
     
+    
+
     
 
     void Start()
@@ -102,11 +111,32 @@ public class PlayerController : MonoBehaviour
         // }
     }
 
+
+    GameObject CriaNovoCarro(int faixa, string tagDirecao) // duplica o carro padrao, declara o pai, seta como ativo, escolhe lado da rua e direcao (esqPraDireita, dirPraEsquerda)
+    {
+        Vector3 novaposicao = carroPadrao.transform.position; // if e talz os 2 com tags tambem
+        Quaternion novarotacao = carroPadrao.transform.rotation;
+        GameObject novocarro = GameObject.Instantiate(carroPadrao, novaposicao, novarotacao, cars.transform);
+        novocarro.SetActive(true);
+        novocarro.tag = tagDirecao;
+        return novocarro;
+    }
+
+    void CriaPrimeirosCarrosDaCena() // funcao chamada no start para inicializar a cena com os carros que já estão presentes
+    {
+
+    }
+
+    void ControladorDeTransito() // determina quando criar carros novos 
+    {
+
+    }
+
     // velocidade normal de andar = 5.5km/h 1.52m/s   (6.5s para atravessar rua)
     // jog = <10km/h <2.77m/s   (3.6s para atravessar rua)
     // carro 5.2 unidades
 
-    public void CalculoColisao()
+    void CalculoColisao()
     {
         foreach (Transform carro in cars.transform)
         {
@@ -185,48 +215,6 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    // public void AtravessarFaixa() // nao esta feito
-    // {
-    //     float endTime;
-    //     float lerpPercent = 0;
-
-    //     if(transform.position.z < meioDaRua){
-    //         if (Manager.Instance.passagemPerto == 2 || Manager.Instance.passagemPerto == 3){
-    //             endTime = larguraRua/velocidadeAndando;
-                
-    //         }
-    //         else {
-    //             endTime = larguraRua/velocidadeJogador;
-                
-    //         }
-    //         if(currentTime < endTime){
-    //         currentTime += Time.deltaTime;
-    //         lerpPercent = currentTime / endTime;
-    //         transform.position = Vector3.Lerp(oldPosition, middlePosition, lerpPercent);
-    //     } 
-    //     } 
-    //     else {
-            
-    //         if (Manager.Instance.passagemLonge == 2){
-    //             endTime = larguraRua/velocidadeAndando;
-    //         }
-    //         else {
-    //             endTime = larguraRua/velocidadeJogador;
-    //         }
-    //     }
-
-    //     if(currentTime < endTime){
-    //         currentTime += Time.deltaTime;
-    //         lerpPercent = currentTime / endTime;
-    //         transform.position = Vector3.Lerp(oldPosition, newPosition, lerpPercent);
-    //     } 
-    //     else {
-    //         transform.position = Vector3.Lerp(oldPosition, newPosition, 1);
-    //         setAtravessando(false);
-    //         StartCoroutine(ChamarEndMenu());
-    //         Debug.Log("Jogo Acabou, Menu Em 5 Segundos");
-    //     }
-    // }
 
     public void PararCarros(){
 
@@ -309,7 +297,7 @@ public class PlayerController : MonoBehaviour
         float menorDistancia = Mathf.Infinity;
         int faixa = -1;
         foreach (Transform carro in cars.transform){
-            if (carro.tag == "NasceEsqVaiDir"){
+            if (carro.tag == esqPraDireita){
                 if (carro.position.x + comprimentoCarro/2 <= transform.position.x){
                     if (Mathf.Abs((carro.position.x + comprimentoCarro/2) - transform.position.x) < menorDistancia){
                         menorDistancia = Mathf.Abs((carro.position.x + comprimentoCarro/2) - transform.position.x);
@@ -317,7 +305,7 @@ public class PlayerController : MonoBehaviour
                     }
                 } 
             }
-            else if (carro.tag == "NasceDirVaiEsq"){
+            else if (carro.tag == dirPraEsquerda){
                 if (carro.position.x - comprimentoCarro/2 >= transform.position.x){
                     if (Mathf.Abs((carro.position.x - comprimentoCarro/2) - transform.position.x) < menorDistancia){
                         menorDistancia = Mathf.Abs((carro.position.x - comprimentoCarro/2) - transform.position.x);
