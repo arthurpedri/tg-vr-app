@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     const float posicaoZFaixa1 = 8f;
     const float posicaoXEsquerda = -250f;
     const float posicaoXDireita = 250f;
+    const float posicaoY = 0f;
     // velocidade em unidades/s  (m/s)
     float velocidadeAndando = 1.52f;
     float velocidadeJogador = 5.77f;
@@ -27,6 +28,7 @@ public class PlayerController : MonoBehaviour
     private float distanciaPerto, distanciaLonge;
     private bool atravessando = false;
     private bool emMovimento = false; // carros em movimento
+    bool carroInstanciado = false;
     public GameObject cruzamento;
     public GameObject[] carros;
     public GameObject cars;
@@ -37,6 +39,7 @@ public class PlayerController : MonoBehaviour
     public float currentTime = 0;
     public AudioClip somFreio;
     DateTime tempoInicialCena;
+    DateTime ultimoCarroFaixa0, ultimoCarroFaixa1;
     DateTime ultimaOlhadaEsquerda, ultimaOlhadaDireita;
     public ContadorCarros contCarros;
     bool olhandoEsquerda = false, olhandoDireita = false;
@@ -54,10 +57,12 @@ public class PlayerController : MonoBehaviour
 
         oldPosition = transform.position;
         newPosition = transform.position + new Vector3(0,0,larguraRua);
+        Manager.Instance.ResetarDadosSimulacao();
         currentTime = 0;
 
         tempoInicialCena = DateTime.Now;
-        Manager.Instance.ResetarDadosSimulacao();
+        ultimaOlhadaEsquerda = tempoInicialCena;
+        ultimaOlhadaDireita = tempoInicialCena;
 
         Manager.Instance.timestamp = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
 
@@ -66,6 +71,9 @@ public class PlayerController : MonoBehaviour
 
 
         emMovimento = true;
+
+        CriaPrimeirosCarrosDaCena();
+        
 
     }
 
@@ -76,7 +84,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown("space"))
         {
             PrepararTravessia();
-        }
+        }  
 
         // checa rotação da camera
         ChecaOlhar();
@@ -92,7 +100,7 @@ public class PlayerController : MonoBehaviour
         }
 
          
-
+        ControladorDeTransito();
 
 
         //update the position
@@ -112,25 +120,50 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    GameObject CriaNovoCarro(int faixa, string tagDirecao) // duplica o carro padrao, declara o pai, seta como ativo, escolhe lado da rua e direcao (esqPraDireita, dirPraEsquerda)
+    void CriaNovoCarro(string tagDirecao, Vector3 posicao) // duplica o carro padrao, declara o pai, seta como ativo, escolhe lado da rua e direcao (esqPraDireita, dirPraEsquerda)
     {
-        Vector3 novaposicao = carroPadrao.transform.position; // if e talz os 2 com tags tambem
+        // Debug.Log(posicao);
         Quaternion novarotacao = carroPadrao.transform.rotation;
-        GameObject novocarro = GameObject.Instantiate(carroPadrao, novaposicao, novarotacao, cars.transform);
-        novocarro.SetActive(true);
+        if (tagDirecao == dirPraEsquerda){
+            novarotacao *= Quaternion.Euler(Vector3.up * 180);
+        }
+        GameObject novocarro = GameObject.Instantiate(carroPadrao, posicao, novarotacao, cars.transform);
         novocarro.tag = tagDirecao;
-        return novocarro;
+        novocarro.SetActive(true);
     }
 
     void CriaPrimeirosCarrosDaCena() // funcao chamada no start para inicializar a cena com os carros que já estão presentes
     {
-
+        for (int i = 0; i < 6; i++)
+        {
+            CriaNovoCarro(esqPraDireita, new Vector3(posicaoXEsquerda + i*100 , posicaoY, posicaoZFaixa0));
+            CriaNovoCarro(dirPraEsquerda, new Vector3(posicaoXDireita - 15 - i*100, posicaoY, posicaoZFaixa1));
+            
+        }
     }
 
     void ControladorDeTransito() // determina quando criar carros novos 
     {
+        DateTime now = DateTime.Now;
+        TimeSpan ts0 = now.Subtract(ultimoCarroFaixa0);
+        TimeSpan ts1 = now.Subtract(ultimoCarroFaixa1);
 
+        if (ts0.Seconds >= 5 && carroInstanciado == false){
+            CriaNovoCarro(esqPraDireita, new Vector3(posicaoXEsquerda, posicaoY, posicaoZFaixa0));
+            carroInstanciado = true;
+        }
+
+        if (ts1.Seconds >= 10){
+            CriaNovoCarro(dirPraEsquerda, new Vector3(posicaoXDireita, posicaoY, posicaoZFaixa1));
+            ultimoCarroFaixa0 = now;
+            ultimoCarroFaixa1 = now;
+            carroInstanciado = false;
+        }
+                
     }
+
+    
+
 
     // velocidade normal de andar = 5.5km/h 1.52m/s   (6.5s para atravessar rua)
     // jog = <10km/h <2.77m/s   (3.6s para atravessar rua)
@@ -224,6 +257,9 @@ public class PlayerController : MonoBehaviour
             AudioSource somCarro = carro.GetComponent<AudioSource>();
             somCarro.Stop();
             AudioSource.PlayClipAtPoint(somFreio, carro.position,4.0f);
+            foreach (Transform roda in carro){
+                roda.GetComponent<Animator>().enabled = false;
+            }
         }
         // pegar posição, salvar faixa e que ocorrou acidente
         Manager.Instance.faixaAcidente = transform.position.z <= meioDaRua ? 0 : 1; // Acidente primeira faixa 0 / segunda 1
@@ -313,6 +349,9 @@ public class PlayerController : MonoBehaviour
                     }
                 }
             }
+        }
+        if (menorDistancia == Mathf.Infinity){
+            menorDistancia = -1;
         }
         return (menorDistancia, faixa);
     }

@@ -25,7 +25,7 @@ public class Car : MonoBehaviour
 
     void Dirigir(){
         transform.Translate(0, 0,Manager.Instance.defaultSpeed*Time.deltaTime);
-        if (transform.position.x >= 250) // teoricamente o fim da rua
+        if (transform.position.x >= 251 || transform.position.x <= -251) // teoricamente o fim da rua
         {
             Destroy(gameObject);
             // transform.position = startPos;

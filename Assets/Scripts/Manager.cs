@@ -26,7 +26,7 @@ public class Manager : Singleton<Manager>
 
     // são setados na simulação
     public float distanciaCruzamento = -1; // em m
-    public float distanciaCarroMaisProximo = -1;
+    public float distanciaCarroMaisProximo = -1; // -1 erro
     public int faixaCarroMaisProximo = -1; // -1 bug / 0 primeira / 1 segunda 
     public int tempoParaTomadaDeDecisao = 0;
     public int quantidadeDeCarrosQueJaPassaram = 0;

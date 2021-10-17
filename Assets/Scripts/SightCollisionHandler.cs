@@ -19,6 +19,7 @@ public class SightCollisionHandler : MonoBehaviour
         SightRenderer.material.color = new Color32(0,255,255,255);
     }
 
+
     void OnTriggerStay(Collider other)
     {
         if (other.gameObject.name == "Target"){
