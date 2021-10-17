@@ -100,8 +100,7 @@ public class Manager : Singleton<Manager>
                         "Qtd. de olhadas esquerda," +
                         "Qtd. de olhadas direita," +
                         "Última olhada esquerda(s)," +
-                        "Última olhada direita(s)" +
-                        "\n"        
+                        "Última olhada direita(s)"  
                         ;
 
 
@@ -134,6 +133,7 @@ public class Manager : Singleton<Manager>
         
         foreach (LinhaDB linha in banco.Table)
         {
+            corpo += "\n";
             corpo += 
                     linha.timestamp + "," +
                     linha.nome + "," +
@@ -158,7 +158,6 @@ public class Manager : Singleton<Manager>
                     linha.ultimaOlhadaDireita
                     ;
 
-            corpo += "\n";
         }
         string caminhoArquivo = PegarCaminhoNovoArquivo();
         try {
