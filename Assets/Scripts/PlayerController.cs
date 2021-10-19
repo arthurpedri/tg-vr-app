@@ -10,6 +10,9 @@ public class PlayerController : MonoBehaviour
     // constantes 
     const string esqPraDireita = "NasceEsqVaiDir";  // tag para direcao do carro
     const string dirPraEsquerda = "NasceDirVaiEsq";
+    const string stringDia = "Dia";
+    const string stringTarde = "Tarde";
+    const string stringNoite = "Noite";
     const float posicaoZFaixa0 = 3.5f; // carros faixa 0: z=3.5   |   faixa 1: z=8
     const float posicaoZFaixa1 = 8f;
     const float posicaoXEsquerda = -250f;
@@ -30,13 +33,11 @@ public class PlayerController : MonoBehaviour
     private bool emMovimento = false; // carros em movimento
     bool carroInstanciado = false;
     public GameObject cruzamento;
-    public GameObject[] carros;
     public GameObject cars;
     public GameObject carroPadrao; // carro padrao para ser copiado
-    public Vector3 oldPosition; // comeco da travessia
-    public Vector3 middlePosition; // metade da travessia
-    public Vector3 newPosition; // destino da travessia
-    public float currentTime = 0;
+    Vector3 oldPosition; // comeco da travessia
+    Vector3 newPosition; // destino da travessia
+    float currentTime = 0;
     public AudioClip somFreio;
     DateTime tempoInicialCena;
     DateTime ultimoCarroFaixa0, ultimoCarroFaixa1;
@@ -44,7 +45,11 @@ public class PlayerController : MonoBehaviour
     public ContadorCarros contCarros;
     bool olhandoEsquerda = false, olhandoDireita = false;
     int olhadasEsquerda = 0, olhadasDireita = 0;
-    public GameObject camera;
+    public GameObject cameraprincipal;
+    public Material skyboxDia;
+    public Material skyboxTarde;
+    public Material skyboxNoite;
+    public GameObject sol;
     
     
 
@@ -60,9 +65,13 @@ public class PlayerController : MonoBehaviour
         Manager.Instance.ResetarDadosSimulacao();
         currentTime = 0;
 
+        SetaAmbiente();
+
         tempoInicialCena = DateTime.Now;
         ultimaOlhadaEsquerda = tempoInicialCena;
         ultimaOlhadaDireita = tempoInicialCena;
+        ultimoCarroFaixa0 = tempoInicialCena;
+        ultimoCarroFaixa1 = tempoInicialCena;
 
         Manager.Instance.timestamp = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
 
@@ -119,17 +128,48 @@ public class PlayerController : MonoBehaviour
         // }
     }
 
-
-    void CriaNovoCarro(string tagDirecao, Vector3 posicao) // duplica o carro padrao, declara o pai, seta como ativo, escolhe lado da rua e direcao (esqPraDireita, dirPraEsquerda)
+    void SetaAmbiente()
     {
-        // Debug.Log(posicao);
-        Quaternion novarotacao = carroPadrao.transform.rotation;
-        if (tagDirecao == dirPraEsquerda){
-            novarotacao *= Quaternion.Euler(Vector3.up * 180);
+        Manager.Instance.periodo = stringNoite;
+        if (Manager.Instance.periodo == stringDia){
+            cameraprincipal.GetComponent<Skybox>().material = skyboxDia;
+            RenderSettings.ambientIntensity = 1f;
+            RenderSettings.reflectionIntensity = 1;
+            sol.GetComponent<Light>().intensity = 1;
+            sol.GetComponent<Light>().shadowStrength = 0.7f;
+            sol.GetComponent<Light>().color = new Color32(250,241,210,255);
         }
-        GameObject novocarro = GameObject.Instantiate(carroPadrao, posicao, novarotacao, cars.transform);
-        novocarro.tag = tagDirecao;
-        novocarro.SetActive(true);
+        else if (Manager.Instance.periodo == stringTarde){
+            cameraprincipal.GetComponent<Skybox>().material = skyboxTarde;
+            RenderSettings.ambientIntensity = 0.9f;
+            RenderSettings.reflectionIntensity = 0.8f;
+            sol.GetComponent<Light>().intensity = 0.3f;
+            sol.GetComponent<Light>().shadowStrength = 0.9f;
+            sol.GetComponent<Light>().color = new Color32(238,142,35,255);
+        }
+        else if (Manager.Instance.periodo == stringNoite){
+            cameraprincipal.GetComponent<Skybox>().material = skyboxNoite;
+            RenderSettings.ambientIntensity = 0.3f;
+            RenderSettings.reflectionIntensity = 0;
+            sol.GetComponent<Light>().intensity = 0;
+            // sol.GetComponent<Light>().color; intensidade zero, nao importa a cor 
+        }
+    }
+
+
+    void CriaNovoCarro(string tagDirecao, Vector3 posicao) // cria carro com posicao especifica duplicando o carro padrao
+    {
+        Quaternion novarotacao = carroPadrao.transform.rotation; 
+        if (tagDirecao == dirPraEsquerda){
+            novarotacao *= Quaternion.Euler(Vector3.up * 180); // rotaciona o carro em 180 graus se a direcao for oposta
+        }
+        GameObject novocarro = GameObject.Instantiate(carroPadrao, posicao, novarotacao, cars.transform);  // duplica o carro padrao com a posicao passada e a rotacao, setando o pai
+        RandomizaCorCarro(novocarro); // faz o corpo do carro ter uma cor aleatoria
+        if (Manager.Instance.periodo == stringTarde || Manager.Instance.periodo == stringNoite){
+            LigaLuzCarro(novocarro);
+        }
+        novocarro.tag = tagDirecao; // seta a tag do carro apropriadamente
+        novocarro.SetActive(true); // ativa o carro duplicado (carro padrão é inativo)
     }
 
     void CriaPrimeirosCarrosDaCena() // funcao chamada no start para inicializar a cena com os carros que já estão presentes
@@ -147,22 +187,58 @@ public class PlayerController : MonoBehaviour
         DateTime now = DateTime.Now;
         TimeSpan ts0 = now.Subtract(ultimoCarroFaixa0);
         TimeSpan ts1 = now.Subtract(ultimoCarroFaixa1);
+        
 
         if (ts0.Seconds >= 5 && carroInstanciado == false){
-            CriaNovoCarro(esqPraDireita, new Vector3(posicaoXEsquerda, posicaoY, posicaoZFaixa0));
             carroInstanciado = true;
+            CriaCarroPadraoEsqPraDireita(0);
         }
 
         if (ts1.Seconds >= 10){
-            CriaNovoCarro(dirPraEsquerda, new Vector3(posicaoXDireita, posicaoY, posicaoZFaixa1));
             ultimoCarroFaixa0 = now;
             ultimoCarroFaixa1 = now;
             carroInstanciado = false;
+            CriaCarroPadraoDirPraEsquerda(1);
         }
                 
     }
 
-    
+    void CriaCarroPadraoEsqPraDireita(int faixa) // cria carro esquerda pra direita na posicao padrao
+    {
+        if (faixa == 0){
+            CriaNovoCarro(esqPraDireita, new Vector3(posicaoXEsquerda, posicaoY, posicaoZFaixa0));
+        }
+        else if (faixa == 1){
+            CriaNovoCarro(esqPraDireita, new Vector3(posicaoXEsquerda, posicaoY, posicaoZFaixa1));
+        }
+    }
+
+    void CriaCarroPadraoDirPraEsquerda(int faixa) // cria carro direita pra esquerda na posicao padrao
+    {
+        if (faixa == 0){
+            CriaNovoCarro(dirPraEsquerda, new Vector3(posicaoXDireita, posicaoY, posicaoZFaixa0));
+        }
+        else if (faixa == 1){
+            CriaNovoCarro(dirPraEsquerda, new Vector3(posicaoXDireita, posicaoY, posicaoZFaixa1));
+        }
+    }
+
+    void RandomizaCorCarro(GameObject carro)
+    {
+        MeshRenderer corpo = carro.transform.GetChild(0).gameObject.GetComponent<MeshRenderer>();
+        Material[] materials = corpo.materials;
+        materials[0].color = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value); // materials[0] é o chassi
+        corpo.materials = materials;
+    }
+
+    void LigaLuzCarro(GameObject carro)
+    {
+        MeshRenderer corpo = carro.transform.GetChild(0).gameObject.GetComponent<MeshRenderer>();  // primeiro filho é o corpo
+        carro.transform.GetChild(5).gameObject.SetActive(true); // sexto filho é o objeto pai das luzes
+        Material[] materials = corpo.materials;
+        materials[6].SetColor("_EmissionColor", new Color(1f,1f,1f,1f)); // branco
+        corpo.materials = materials;
+    }   
 
 
     // velocidade normal de andar = 5.5km/h 1.52m/s   (6.5s para atravessar rua)
@@ -209,7 +285,6 @@ public class PlayerController : MonoBehaviour
     public void PrepararTravessia(){
         
         oldPosition = transform.position;
-        middlePosition = transform.position + new Vector3(0,0,meioDaRua);
         newPosition = transform.position + new Vector3(0,0,larguraRua);
 
         SalvarDadosDecisaoAtravessar();
@@ -358,7 +433,7 @@ public class PlayerController : MonoBehaviour
 
     // rotação da camera quando olha para os carros 325 x 20   E  300 y 240    D   60 y 120
     void ChecaOlhar(){ 
-        // Debug.Log("Eu: " + camera.localEulerAngles + " Rot: " + camera.rotation);
+        // Debug.Log("Eu: " + cameraprincipal.localEulerAngles + " Rot: " + cameraprincipal.rotation);
         // Debug.Log("E: " + CameraDentroCoordenadas(325, 20, 240, 300) + " D: " + CameraDentroCoordenadas(325, 20, 60, 120));
 
         
@@ -395,8 +470,8 @@ public class PlayerController : MonoBehaviour
 
     bool CameraDentroCoordenadas(float menorX, float maiorX, float menorY, float maiorY)
     {
-        if (camera.transform.localEulerAngles.x >= menorX || camera.transform.localEulerAngles.x <= maiorX){
-            if (camera.transform.localEulerAngles.y >= menorY && camera.transform.localEulerAngles.y <= maiorY){
+        if (cameraprincipal.transform.localEulerAngles.x >= menorX || cameraprincipal.transform.localEulerAngles.x <= maiorX){
+            if (cameraprincipal.transform.localEulerAngles.y >= menorY && cameraprincipal.transform.localEulerAngles.y <= maiorY){
                 return true;
             }
         }
