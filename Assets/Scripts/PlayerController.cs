@@ -32,7 +32,8 @@ public class PlayerController : MonoBehaviour
     private bool atravessando = false;
     private bool emMovimento = false; // carros em movimento
     bool carroInstanciado = false;
-    public GameObject cruzamento;
+    public GameObject rua;
+    GameObject cruzamento;
     public GameObject cars;
     public GameObject carroPadrao; // carro padrao para ser copiado
     Vector3 oldPosition; // comeco da travessia
@@ -49,7 +50,7 @@ public class PlayerController : MonoBehaviour
     public Material skyboxDia;
     public Material skyboxTarde;
     public Material skyboxNoite;
-    public GameObject sol;
+    public GameObject sol, chao;
     
     
 
@@ -66,6 +67,8 @@ public class PlayerController : MonoBehaviour
         currentTime = 0;
 
         SetaAmbiente();
+
+        cruzamento = rua.transform.GetChild(0).gameObject;
 
         tempoInicialCena = DateTime.Now;
         ultimaOlhadaEsquerda = tempoInicialCena;
@@ -128,9 +131,18 @@ public class PlayerController : MonoBehaviour
         // }
     }
 
-    void SetaAmbiente()
+    void SetaAmbiente() // 90 e 90
     {
-        Manager.Instance.periodo = stringNoite;
+        // Manager.Instance.periodo = stringNoite;
+
+        Material grama = chao.GetComponent<Terrain>().materialTemplate;
+        GameObject postes = rua.transform.GetChild(1).gameObject;
+        MeshRenderer bulboPoste;
+        Material[] materiaisPoste;
+        Color bulboCor;
+
+
+
         if (Manager.Instance.periodo == stringDia){
             cameraprincipal.GetComponent<Skybox>().material = skyboxDia;
             RenderSettings.ambientIntensity = 1f;
@@ -138,6 +150,15 @@ public class PlayerController : MonoBehaviour
             sol.GetComponent<Light>().intensity = 1;
             sol.GetComponent<Light>().shadowStrength = 0.7f;
             sol.GetComponent<Light>().color = new Color32(250,241,210,255);
+            grama.color = new Color32(207,207,207,255);
+            grama = chao.GetComponent<Terrain>().materialTemplate;
+
+            foreach (Transform poste in postes.transform)
+            {
+                poste.GetChild(0).gameObject.SetActive(false); // ativa luz do poste
+            }
+            
+            
         }
         else if (Manager.Instance.periodo == stringTarde){
             cameraprincipal.GetComponent<Skybox>().material = skyboxTarde;
@@ -146,6 +167,13 @@ public class PlayerController : MonoBehaviour
             sol.GetComponent<Light>().intensity = 0.3f;
             sol.GetComponent<Light>().shadowStrength = 0.9f;
             sol.GetComponent<Light>().color = new Color32(238,142,35,255);
+            grama.color = new Color32(207,207,207,255);
+            grama = chao.GetComponent<Terrain>().materialTemplate;
+
+            foreach (Transform poste in postes.transform)
+            {
+                poste.GetChild(0).gameObject.SetActive(false); // ativa luz do poste
+            }
         }
         else if (Manager.Instance.periodo == stringNoite){
             cameraprincipal.GetComponent<Skybox>().material = skyboxNoite;
@@ -153,6 +181,18 @@ public class PlayerController : MonoBehaviour
             RenderSettings.reflectionIntensity = 0;
             sol.GetComponent<Light>().intensity = 0;
             // sol.GetComponent<Light>().color; intensidade zero, nao importa a cor 
+            grama.color = new Color32(90,90,90,255);
+            grama = chao.GetComponent<Terrain>().materialTemplate;
+
+            foreach (Transform poste in postes.transform)
+            {
+                poste.GetChild(0).gameObject.SetActive(true); // ativa luz do poste
+                bulboPoste = poste.GetChild(1).gameObject.GetComponent<MeshRenderer>(); // ativa emissao do bulbo do poste
+                materiaisPoste = bulboPoste.materials;
+                bulboCor = materiaisPoste[0].color;
+                materiaisPoste[0].SetColor("_EmissionColor", new Color(bulboCor.r,bulboCor.g,bulboCor.b,1f));
+                bulboPoste.materials = materiaisPoste;
+            }
         }
     }
 
