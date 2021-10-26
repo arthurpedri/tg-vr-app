@@ -70,6 +70,8 @@ public class PlayerController : MonoBehaviour
 
         cruzamento = rua.transform.GetChild(0).gameObject;
 
+        carroPadrao.SetActive(false); // caso deixe o carro padrao como ativo na cena por acidente
+
         tempoInicialCena = DateTime.Now;
         ultimaOlhadaEsquerda = tempoInicialCena;
         ultimaOlhadaDireita = tempoInicialCena;
@@ -133,8 +135,9 @@ public class PlayerController : MonoBehaviour
 
     void SetaAmbiente() // 90 e 90
     {
-        // Manager.Instance.periodo = stringNoite;
-
+        #if UNITY_EDITOR
+        Manager.Instance.periodo = stringNoite;
+        #endif
         Material grama = chao.GetComponent<Terrain>().materialTemplate;
         GameObject postes = rua.transform.GetChild(1).gameObject;
         MeshRenderer bulboPoste;
