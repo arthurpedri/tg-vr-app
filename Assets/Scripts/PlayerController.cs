@@ -50,7 +50,7 @@ public class PlayerController : MonoBehaviour
     public Material skyboxDia;
     public Material skyboxTarde;
     public Material skyboxNoite;
-    public GameObject sol, chao;
+    public GameObject sol, chao, predios;
     
     
 
@@ -85,6 +85,8 @@ public class PlayerController : MonoBehaviour
 
 
         emMovimento = true;
+
+        DesligaLODPredios();
 
         CriaPrimeirosCarrosDaCena();
         
@@ -136,7 +138,7 @@ public class PlayerController : MonoBehaviour
     void SetaAmbiente() // 90 e 90
     {
         #if UNITY_EDITOR
-        Manager.Instance.periodo = stringNoite;
+        Manager.Instance.periodo = stringTarde;
         #endif
         Material grama = chao.GetComponent<Terrain>().materialTemplate;
         GameObject postes = rua.transform.GetChild(1).gameObject;
@@ -272,6 +274,19 @@ public class PlayerController : MonoBehaviour
         Material[] materials = corpo.materials;
         materials[0].color = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value); // materials[0] é o chassi
         corpo.materials = materials;
+    }
+
+    void DesligaLODPredios()
+    {
+        MeshRenderer bisnetoPredio;
+        Material[] materiaisBisneto;
+        foreach (Transform predio in predios.transform)
+        {
+            bisnetoPredio = predio.GetChild(0).GetChild(0).GetChild(0).GetComponent<MeshRenderer>();
+            materiaisBisneto = bisnetoPredio.materials;
+            // materiaisBisneto[0].color = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value); // [0] é o building_brick_diff
+            bisnetoPredio.materials[0].SetColor("_Color", new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value));
+        }
     }
 
     void LigaLuzCarro(GameObject carro)
