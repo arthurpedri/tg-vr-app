@@ -9,7 +9,7 @@ using System;
 public class EndMenuController : MonoBehaviour {
 
 	public Button Menu, Exportar;
-	public Text resultado, perto, longe, cruzamento;
+	public Text resultado;
 
 	// Use this for initialization
 	void Start () {

@@ -11,8 +11,7 @@ public class ExportController : MonoBehaviour
 {
 
     NativeShare share;
-    public Button Exportar, Menu;
-    public Text Erro;
+    public Button Exportar, ExportarHoje, Menu;
 
     void Awake() 
     {
@@ -22,30 +21,29 @@ public class ExportController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Exportar.onClick.AddListener(delegate {StartCoroutine( ChamarShareAndroid() ); });
+        Exportar.onClick.AddListener(delegate {StartCoroutine( ChamarShareAndroid(true) ); });
+        ExportarHoje.onClick.AddListener(delegate {StartCoroutine( ChamarShareAndroid(false) ); });
         // StartCoroutine( TakeScreenshotAndShare() );
         Menu.onClick.AddListener(delegate {LoadScene("Menu"); });
     }
 
 
-    private IEnumerator ChamarShareAndroid()
+    private IEnumerator ChamarShareAndroid(bool tudo)
     {
         yield return new WaitForEndOfFrame();
         // Erro.text = "Entrou na função \n";
 
 
-        string caminhoArquivo = Manager.Instance.CriarArquivoParaExportar();
+        string caminhoArquivo = Manager.Instance.CriarArquivoParaExportar(tudo);
         string nomeArquivo = caminhoArquivo.Split('/').Last();
         
 
 
         if (caminhoArquivo != "erro") {
             if (File.Exists(caminhoArquivo)){
-                Erro.text += "Arquivo existe\n";
                 new NativeShare().AddFile(caminhoArquivo).SetSubject(nomeArquivo).SetText( "Dados Trânsito" ).Share();
             }
             else {
-                Erro.text += "Arquivo não existe\n";
                 new NativeShare().SetSubject("Banco de Dados").SetText( "Arquivo Vazio" ).Share();
                 Debug.Log("Arquivo não existe");
             }

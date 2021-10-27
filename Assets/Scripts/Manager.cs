@@ -74,7 +74,7 @@ public class Manager : Singleton<Manager>
             ultimaOlhadaDireita = -1; // -1 nunca olhou
     }
 
-    public string CriarArquivoParaExportar()
+    public string CriarArquivoParaExportar(bool tudo)
     {
         BancoDeDados banco = PegarBancoDeDados();
 
@@ -133,31 +133,32 @@ public class Manager : Singleton<Manager>
         
         foreach (LinhaDB linha in banco.Table)
         {
-            corpo += "\n";
-            corpo += 
-                    linha.timestamp + "," +
-                    linha.nome + "," +
-                    linha.idade + "," +
-                    linha.altura + "," +
-                    linha.velocidade + "," +
-                    linha.ambiente + "," +
-                    linha.periodo + "," +
-                    linha.dificuldade + "," +
-                    linha.houveAcidente + "," +
-                    linha.faixaAcidente + "," +
-                    linha.cruzamentoCorreto + "," +
-                    linha.distanciaCruzamento + "," +
-                    linha.distanciaCarroMaisProximo + "," +
-                    linha.faixaCarroMaisProximo + "," +
-                    linha.tempoParaTomadaDeDecisao + "," +
-                    linha.quantidadeDeCarrosQueJaPassaram + "," +
-                    linha.quantidadeDeCarrosEnquantoAtravessava + "," +
-                    linha.quantidadeDeOlhadasEsquerda + "," +
-                    linha.quantidadeDeOlhadasDireita + "," +
-                    linha.ultimaOlhadaEsquerda + "," +
-                    linha.ultimaOlhadaDireita
-                    ;
-
+            if (DateTime.Now.Date == DateTime.Parse(linha.timestamp).Date || tudo == true) {
+                corpo += "\n";
+                corpo += 
+                        linha.timestamp + "," +
+                        linha.nome + "," +
+                        linha.idade + "," +
+                        linha.altura + "," +
+                        linha.velocidade + "," +
+                        linha.ambiente + "," +
+                        linha.periodo + "," +
+                        linha.dificuldade + "," +
+                        linha.houveAcidente + "," +
+                        linha.faixaAcidente + "," +
+                        linha.cruzamentoCorreto + "," +
+                        linha.distanciaCruzamento + "," +
+                        linha.distanciaCarroMaisProximo + "," +
+                        linha.faixaCarroMaisProximo + "," +
+                        linha.tempoParaTomadaDeDecisao + "," +
+                        linha.quantidadeDeCarrosQueJaPassaram + "," +
+                        linha.quantidadeDeCarrosEnquantoAtravessava + "," +
+                        linha.quantidadeDeOlhadasEsquerda + "," +
+                        linha.quantidadeDeOlhadasDireita + "," +
+                        linha.ultimaOlhadaEsquerda + "," +
+                        linha.ultimaOlhadaDireita
+                        ;
+            }
         }
         string caminhoArquivo = PegarCaminhoNovoArquivo();
         try {

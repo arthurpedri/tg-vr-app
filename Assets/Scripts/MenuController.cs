@@ -50,7 +50,7 @@ public class MenuController : MonoBehaviour {
 	public void LoadScene(string cena)
     {
 		// salvar informações do jogo
-		Manager.Instance.nome = Nome.text != "" ? Nome.text : "Nome Vazio"; // nome padrão Nome Vazio
+		Manager.Instance.nome = Nome.text != "" ? Nome.text.Replace(",", "") : "Nome Vazio"; // nome padrão Nome Vazio
 		Manager.Instance.idade = Idade.text != "" ? int.Parse(Idade.text) : 0; // idade padrão 0
 		Manager.Instance.altura = Altura.text != "" ? int.Parse(Altura.text) : 180;  // altura padrão 180
 		
@@ -76,25 +76,28 @@ public class MenuController : MonoBehaviour {
 
 	public void LoadInicial()
     {
-		if(int.Parse(Altura.text) < 100 || int.Parse(Altura.text) > 280){
-			Altura.text = "";
-			Altura.placeholder.GetComponent<Text>().text = "Entre 100 e 280cm";
-			Altura.GetComponent<Image>().color = new Color32(255,177,177,255);
-			return;
+		if (validaAltura()){ // pode expandir para outra validacoes
+			menuopcoes.SetActive(false);
+			inicial.SetActive(true);
 		}
-		else{
-    		menuopcoes.SetActive(false);
-	    	inicial.SetActive(true);
-			Altura.GetComponent<Image>().color = new Color32(255,255,255,255);
-		}
-    	
+
     }
 
-	void changeAltura()
+	bool validaAltura()
 	{
+		if (Altura.text == ""){
+			Altura.GetComponent<Image>().color = new Color32(255,255,255,255);
+			return true;
+		} 
 		if(int.Parse(Altura.text) <= 100 || int.Parse(Altura.text) >= 280){
 			Altura.text = "";
 			Altura.placeholder.GetComponent<Text>().text = "Entre 100 e 280cm";
+			Altura.GetComponent<Image>().color = new Color32(255,177,177,255);
+			return false;
+		}
+		else {
+			Altura.GetComponent<Image>().color = new Color32(255,255,255,255);
+			return true;
 		}
 	}
 
