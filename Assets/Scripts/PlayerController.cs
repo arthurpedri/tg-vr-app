@@ -86,7 +86,6 @@ public class PlayerController : MonoBehaviour
 
         emMovimento = true;
 
-        DesligaLODPredios();
 
         CriaPrimeirosCarrosDaCena();
         
@@ -276,18 +275,6 @@ public class PlayerController : MonoBehaviour
         corpo.materials = materials;
     }
 
-    void DesligaLODPredios()
-    {
-        MeshRenderer bisnetoPredio;
-        Material[] materiaisBisneto;
-        foreach (Transform predio in predios.transform)
-        {
-            bisnetoPredio = predio.GetChild(0).GetChild(0).GetChild(0).GetComponent<MeshRenderer>();
-            materiaisBisneto = bisnetoPredio.materials;
-            // materiaisBisneto[0].color = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value); // [0] é o building_brick_diff
-            bisnetoPredio.materials[0].SetColor("_Color", new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value));
-        }
-    }
 
     void LigaLuzCarro(GameObject carro)
     {
