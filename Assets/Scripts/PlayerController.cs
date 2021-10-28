@@ -137,7 +137,7 @@ public class PlayerController : MonoBehaviour
     void SetaAmbiente() // 90 e 90
     {
         #if UNITY_EDITOR
-        Manager.Instance.periodo = stringTarde;
+        Manager.Instance.periodo = stringNoite;
         #endif
         Material grama = chao.GetComponent<Terrain>().materialTemplate;
         GameObject postes = rua.transform.GetChild(1).gameObject;
