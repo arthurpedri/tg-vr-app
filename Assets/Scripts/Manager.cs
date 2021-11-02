@@ -21,6 +21,10 @@ public class Manager : Singleton<Manager>
     public int idade = 0;
     public int altura = 180;
 
+    // configuração de joystick / controle
+    public KeyCode botaoAndar = KeyCode.JoystickButton0; // sul
+    public KeyCode botaoCorrer = KeyCode.JoystickButton2; // oeste
+
     // guarda no start da cena
     public string timestamp;
 

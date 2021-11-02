@@ -19,8 +19,8 @@ public class PlayerController : MonoBehaviour
     const float posicaoXDireita = 250f;
     const float posicaoY = 0f;
     // velocidade em unidades/s  (m/s)
-    float velocidadeAndando = 1.52f;
-    float velocidadeJogador = 5.77f;
+    float velocidadeAndando = 5/3.6f;
+    float velocidadeJogador = 5/3.6f;
     float comprimentoCarro = 5.2f;
     float sentidoRua = 1;
     float hitboxLarguraCarro = 3f; // largura maior que a do carro 
@@ -88,38 +88,35 @@ public class PlayerController : MonoBehaviour
 
 
         CriaPrimeirosCarrosDaCena();
+
+        #if UNITY_EDITOR
+        transform.GetChild(1).gameObject.SetActive(true);
+        #endif
         
 
     }
 
     void Update()
     {
-        //get the Input from Horizontal axis
-        float horizontalInput = Input.GetAxis("Horizontal");
-        if (Input.GetKeyDown("space"))
-        {
-            PrepararTravessia();
-        }  
-
-        // checa rotação da camera
-        ChecaOlhar();
-
-        if (atravessando)
-        {
+        if (!atravessando){
+            if (Input.GetKeyDown("space") || Input.GetKeyDown(Manager.Instance.botaoAndar) || Input.GetKeyDown(Manager.Instance.botaoCorrer))
+            {
+                PrepararTravessia();
+            }  
+            AndarAxis();
+        }
+        else {
             if(emMovimento){
                 Atravessar();
                 // calcula se carro bate
                 CalculoColisao();
             }
-
         }
-
-         
+        
+        // checa rotação da camera
+        ChecaOlhar();
+        
         ControladorDeTransito();
-
-
-        //update the position
-        transform.position = transform.position + new Vector3(horizontalInput * velocidadeAndando * Time.deltaTime, 0, 0);
 
     }
 
@@ -137,8 +134,12 @@ public class PlayerController : MonoBehaviour
     void SetaAmbiente() // 90 e 90
     {
         #if UNITY_EDITOR
-        Manager.Instance.periodo = stringNoite;
+        Manager.Instance.periodo = stringTarde;
+
         #endif
+
+        
+
         Material grama = chao.GetComponent<Terrain>().materialTemplate;
         GameObject postes = rua.transform.GetChild(1).gameObject;
         MeshRenderer bulboPoste;
@@ -221,7 +222,8 @@ public class PlayerController : MonoBehaviour
         for (int i = 0; i < 6; i++)
         {
             CriaNovoCarro(esqPraDireita, new Vector3(posicaoXEsquerda + i*100 , posicaoY, posicaoZFaixa0));
-            CriaNovoCarro(dirPraEsquerda, new Vector3(posicaoXDireita - 15 - i*100, posicaoY, posicaoZFaixa1));
+            CriaNovoCarro(esqPraDireita, new Vector3(posicaoXEsquerda + i*100 + 15, posicaoY, posicaoZFaixa1));
+            // CriaNovoCarro(dirPraEsquerda, new Vector3(posicaoXDireita - 15 - i*100, posicaoY, posicaoZFaixa1));
             
         }
     }
@@ -242,7 +244,8 @@ public class PlayerController : MonoBehaviour
             ultimoCarroFaixa0 = now;
             ultimoCarroFaixa1 = now;
             carroInstanciado = false;
-            CriaCarroPadraoDirPraEsquerda(1);
+            CriaCarroPadraoEsqPraDireita(1);
+            // CriaCarroPadraoDirPraEsquerda(1);
         }
                 
     }
@@ -324,7 +327,42 @@ public class PlayerController : MonoBehaviour
 
     public void Andar(int direcao) // -1 esquerda     1 direita
     {
-        transform.position = transform.position + new Vector3(direcao * velocidadeAndando * Time.deltaTime * 10, 0, 0);
+        transform.position = transform.position + new Vector3(direcao * velocidadeAndando * Time.deltaTime, 0, 0);
+    }
+
+    void AndarAxis()
+    {
+        //get the Input from Horizontal axis
+        float horizontalInput = Input.GetAxis("Horizontal");
+        float verticalInput = Input.GetAxis("Vertical");
+
+        //update the position
+        transform.position = transform.position + new Vector3(horizontalInput * velocidadeAndando * Time.deltaTime, 0, 0);
+
+
+        float angulo = cameraprincipal.transform.localEulerAngles.y;
+        float coef = 0;
+
+        if (angulo <= 90){
+            coef = angulo / 90;
+        }
+        else if (angulo <= 180){
+            coef = (180 - angulo)/90;
+        }
+        else if (angulo <= 270){
+            coef = -((angulo - 180)/90);
+        }
+        else if (angulo <= 360){
+            coef = -((360 - angulo)/90);
+        }
+
+        // Debug.Log("v: " + verticalInput * coef + " h: " + horizontalInput);
+
+        if (Mathf.Abs(horizontalInput) > Mathf.Abs(verticalInput * coef))
+            transform.position = transform.position + new Vector3(horizontalInput * velocidadeAndando * Time.deltaTime, 0, 0);
+        else
+            transform.position = transform.position + new Vector3((verticalInput * coef) * velocidadeAndando * Time.deltaTime, 0, 0);
+
     }
 
     public void PrepararTravessia(){

@@ -17,6 +17,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ExportarMenu.unity
     guid: 99d6baaf714a21f4d8869d68cedded8c
+  - enabled: 1
+    path: Assets/Scenes/ConfigControle.unity
+    guid: 8c8ca935ee39a4045ada87fe8192e9e2
   m_configObjects:
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 6dc7193e86fe128458758e53d64b68a1,
       type: 2}

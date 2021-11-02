@@ -10,7 +10,7 @@ public class MenuController : MonoBehaviour {
 	public GameObject inicial, menuopcoes;
 
 	// Botões de interação
-	public Button Jogar, Opcoes, Voltar, Exportar;
+	public Button Jogar, Opcoes, Voltar, Exportar, Controle;
 
 	// Velocidade carros
 	public Slider VelocidadeSlider;
@@ -35,6 +35,7 @@ public class MenuController : MonoBehaviour {
 
 		Jogar.onClick.AddListener(delegate {LoadScene("PrimeiraCena"); });
 		Exportar.onClick.AddListener(delegate {LoadScene("ExportarMenu"); });
+		Controle.onClick.AddListener(delegate {LoadScene("ConfigControle"); });
 		Opcoes.onClick.AddListener(LoadOpcoes);
 		Voltar.onClick.AddListener(LoadInicial);
 		VelocidadeSlider.onValueChanged.AddListener(delegate {changeSpeed(); });
