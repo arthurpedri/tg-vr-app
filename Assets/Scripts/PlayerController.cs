@@ -52,9 +52,7 @@ public class PlayerController : MonoBehaviour
     public Material skyboxNoite;
     public GameObject sol, chao, predios;
     
-    
-
-    
+        
 
     void Start()
     {
@@ -65,6 +63,11 @@ public class PlayerController : MonoBehaviour
         newPosition = transform.position + new Vector3(0,0,larguraRua);
         Manager.Instance.ResetarDadosSimulacao();
         currentTime = 0;
+
+        #if UNITY_EDITOR
+        transform.GetChild(1).gameObject.SetActive(false);
+        Manager.Instance.periodo = stringDia;
+        #endif
 
         SetaAmbiente();
 
@@ -89,9 +92,7 @@ public class PlayerController : MonoBehaviour
 
         CriaPrimeirosCarrosDaCena();
 
-        #if UNITY_EDITOR
-        transform.GetChild(1).gameObject.SetActive(true);
-        #endif
+        
         
 
     }
@@ -133,11 +134,6 @@ public class PlayerController : MonoBehaviour
 
     void SetaAmbiente() // 90 e 90
     {
-        #if UNITY_EDITOR
-        Manager.Instance.periodo = stringNoite;
-
-        #endif
-
         
 
         Material grama = chao.GetComponent<Terrain>().materialTemplate;
@@ -160,7 +156,7 @@ public class PlayerController : MonoBehaviour
 
             foreach (Transform poste in postes.transform)
             {
-                poste.GetChild(0).gameObject.SetActive(false); // ativa luz do poste
+                poste.GetChild(0).gameObject.SetActive(false); // desaativa luz do poste
             }
             
             
@@ -177,7 +173,7 @@ public class PlayerController : MonoBehaviour
 
             foreach (Transform poste in postes.transform)
             {
-                poste.GetChild(0).gameObject.SetActive(false); // ativa luz do poste
+                poste.GetChild(0).gameObject.SetActive(false); // desativa luz do poste
             }
         }
         else if (Manager.Instance.periodo == stringNoite){
