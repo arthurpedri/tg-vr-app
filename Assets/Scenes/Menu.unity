@@ -2399,8 +2399,6 @@ MonoBehaviour:
       m_Image: {fileID: 0}
     - m_Text: "M\xE3o Dupla"
       m_Image: {fileID: 0}
-    - m_Text: Tutorial
-      m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -4503,7 +4501,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Cidade
+  m_Text: "N\xE3o"
 --- !u!222 &1331546158
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5263,11 +5261,9 @@ MonoBehaviour:
   m_Value: 0
   m_Options:
     m_Options:
-    - m_Text: Cidade
+    - m_Text: "N\xE3o"
       m_Image: {fileID: 0}
-    - m_Text: "Em Constru\xE7\xE3o"
-      m_Image: {fileID: 0}
-    - m_Text: "Em Constru\xE7\xE3o"
+    - m_Text: Sim
       m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
@@ -5788,7 +5784,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Ambiente: '
+  m_Text: 'Controle Alt.: '
 --- !u!222 &1758394865
 CanvasRenderer:
   m_ObjectHideFlags: 0

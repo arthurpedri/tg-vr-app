@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour
     const float posicaoY = 0f;
     // velocidade em unidades/s  (m/s)
     float velocidadeAndando = 5/3.6f;
-    float velocidadeJogador = 5/3.6f;
+    float velocidadeJogador = 15/3.6f;
     float comprimentoCarro = 5.2f;
     float sentidoRua = 1;
     float hitboxLarguraCarro = 3f; // largura maior que a do carro 
@@ -64,9 +64,12 @@ public class PlayerController : MonoBehaviour
         Manager.Instance.ResetarDadosSimulacao();
         currentTime = 0;
 
+        
+
         #if UNITY_EDITOR
-        transform.GetChild(1).gameObject.SetActive(false);
+        Manager.Instance.controleAlternativo = "Sim";
         Manager.Instance.periodo = stringDia;
+        Manager.Instance.dificuldade = "Mão Dupla";
         #endif
 
         SetaAmbiente();
@@ -142,7 +145,15 @@ public class PlayerController : MonoBehaviour
         Material[] materiaisPoste;
         Color bulboCor;
 
-
+        if (Manager.Instance.controleAlternativo == "Não"){
+            transform.GetChild(1).gameObject.SetActive(false);
+            cameraprincipal.transform.GetChild(0).gameObject.SetActive(false);
+        }
+        else {
+            transform.GetChild(1).gameObject.SetActive(true);
+            cameraprincipal.transform.GetChild(0).gameObject.SetActive(true);
+        }
+        
 
         if (Manager.Instance.periodo == stringDia){
             cameraprincipal.GetComponent<Skybox>().material = skyboxDia;
@@ -218,8 +229,10 @@ public class PlayerController : MonoBehaviour
         for (int i = 0; i < 6; i++)
         {
             CriaNovoCarro(esqPraDireita, new Vector3(posicaoXEsquerda + i*100 , posicaoY, posicaoZFaixa0));
-            CriaNovoCarro(esqPraDireita, new Vector3(posicaoXEsquerda + i*100 + 15, posicaoY, posicaoZFaixa1));
-            // CriaNovoCarro(dirPraEsquerda, new Vector3(posicaoXDireita - 15 - i*100, posicaoY, posicaoZFaixa1));
+            if (Manager.Instance.dificuldade == "Mão Simples")
+                CriaNovoCarro(esqPraDireita, new Vector3(posicaoXEsquerda + i*100 + 15, posicaoY, posicaoZFaixa1));
+            else
+                CriaNovoCarro(dirPraEsquerda, new Vector3(posicaoXDireita - 15 - i*100, posicaoY, posicaoZFaixa1));
             
         }
     }
@@ -240,8 +253,10 @@ public class PlayerController : MonoBehaviour
             ultimoCarroFaixa0 = now;
             ultimoCarroFaixa1 = now;
             carroInstanciado = false;
-            CriaCarroPadraoEsqPraDireita(1);
-            // CriaCarroPadraoDirPraEsquerda(1);
+            if (Manager.Instance.dificuldade == "Mão Simples")
+                CriaCarroPadraoEsqPraDireita(1);
+            else 
+                CriaCarroPadraoDirPraEsquerda(1);
         }
                 
     }
@@ -293,13 +308,18 @@ public class PlayerController : MonoBehaviour
     {
         foreach (Transform carro in cars.transform)
         {
+            if (carro.tag == dirPraEsquerda)
+                sentidoRua = -1;
+            else 
+                sentidoRua = 1;
             // testando o caso de bater na frente do carro
             if ((carro.position.z - hitboxLarguraCarro/2) <= transform.position.z && transform.position.z <= (carro.position.z + hitboxLarguraCarro/2)){ // 
                 if (Mathf.Abs((carro.position.x + sentidoRua * comprimentoCarro/2) - transform.position.x) <= 1.5){ // carro vai parar a 1.5 unidade de distancia
                     // Debug.Log("Player x: "+transform.position.x + " z: " + transform.position.z);
                     // Debug.Log("Carro x: "+ (carro.position.x + comprimentoCarro/2) + " z: " + (carro.position.z + hitboxLarguraCarro/2));
+                    
                     PararCarros();
-                    // Debug.Log("Bateu na frente");
+                    Debug.Log("Bateu na frente");
                     return;
                 }
             }
@@ -311,7 +331,7 @@ public class PlayerController : MonoBehaviour
                     (Mathf.Abs((carro.position.z - hitboxLarguraCarro/2) - transform.position.z)) // distancia do jogador ate o carro 
                     / velocidadeJogador){  
                         PararCarros();
-                        // Debug.Log("Bateu no meio");
+                        Debug.Log("Bateu no meio");
                         return;
                 }
                 }

@@ -15,7 +15,7 @@ public class Manager : Singleton<Manager>
     // public int passagemPerto; // -1 bug / 0 bateu / 1 correndo / 2 andando perigoso / 3 andando tranquilo
     public int cruzamentoCorreto = -1; // -1 bug / 0 errado / 1 correto
     public string periodo = "Dia"; 
-    public string ambiente = "Cidade";
+    public string controleAlternativo = "Não";
     public string dificuldade = "Mão Simples";
     public string nome = "Nome Vazio";
     public int idade = 0;
@@ -47,7 +47,7 @@ public class Manager : Singleton<Manager>
     {
         // dados ambiente
         Debug.Log("Velocidade Carros: " + defaultSpeed + " | Distancia Cruzamento: " + distanciaCruzamento + " | Cruzamento Correto: " + cruzamentoCorreto);
-        Debug.Log("Período: " + periodo + " | Ambiente: " + ambiente + " | Dificuldade: " + dificuldade);
+        Debug.Log("Período: " + periodo + " | controleAlternativo: " + controleAlternativo + " | Dificuldade: " + dificuldade);
         Debug.Log("Nome: " + nome + " | Idade: " + idade + " | Altura: " + altura);
         Debug.Log("Timestamp: " + timestamp);
 
@@ -88,7 +88,7 @@ public class Manager : Singleton<Manager>
                         "Altura(cm)," +
 
                         "Velocidade(km/h)," +
-                        "Ambiente," +
+                        "Controle Alternativo," +
                         "Período," +
                         "Dificuldade," +
 
@@ -145,7 +145,7 @@ public class Manager : Singleton<Manager>
                         linha.idade + "," +
                         linha.altura + "," +
                         linha.velocidade + "," +
-                        linha.ambiente + "," +
+                        linha.controleAlternativo + "," +
                         linha.periodo + "," +
                         linha.dificuldade + "," +
                         linha.houveAcidente + "," +
@@ -248,7 +248,7 @@ public class Manager : Singleton<Manager>
         linha.velocidade = Manager.Instance.velocidadeKm;
         linha.cruzamentoCorreto = Manager.Instance.cruzamentoCorreto;
         linha.periodo = Manager.Instance.periodo; 
-        linha.ambiente = Manager.Instance.ambiente;
+        linha.controleAlternativo = Manager.Instance.controleAlternativo;
         linha.dificuldade = Manager.Instance.dificuldade;
         linha.nome = Manager.Instance.nome;
         linha.idade = Manager.Instance.idade;
@@ -294,7 +294,7 @@ public class LinhaDB
     // public int passagemPerto; // -1 bug / 0 bateu / 1 correndo / 2 andando perigoso / 3 andando tranquilo
     public int cruzamentoCorreto = -1; // -1 bug / 0 errado / 1 correto
     public string periodo = "Dia"; 
-    public string ambiente = "Cidade";
+    public string controleAlternativo = "Não";
     public string dificuldade = "Mão Simples";
     public string nome = "Nome Vazio";
     public int idade = 0;

@@ -41,7 +41,7 @@ public class MenuController : MonoBehaviour {
 		VelocidadeSlider.onValueChanged.AddListener(delegate {changeSpeed(); });
 
 		Periodo.onValueChanged.AddListener(delegate {changePeriodo(); });
-		Ambiente.onValueChanged.AddListener(delegate {changeAmbiente(); });
+		Ambiente.onValueChanged.AddListener(delegate {changeAmbiente(); }); // agora controleAlternativo
 		Dificuldade.onValueChanged.AddListener(delegate {changeDificuldade(); });
 		
 		menuopcoes.SetActive(false); // começando com o menu de opcoes desativado
@@ -109,7 +109,7 @@ public class MenuController : MonoBehaviour {
 
 	void changeAmbiente()
 	{
-		Manager.Instance.ambiente = Ambiente.captionText.text;
+		Manager.Instance.controleAlternativo = Ambiente.captionText.text;
 	}
 
 	void changeDificuldade()
