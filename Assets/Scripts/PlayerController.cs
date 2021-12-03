@@ -67,9 +67,9 @@ public class PlayerController : MonoBehaviour
         
 
         #if UNITY_EDITOR
-        Manager.Instance.controleAlternativo = "Sim";
+        Manager.Instance.controleAlternativo = "Não";
         Manager.Instance.periodo = stringDia;
-        Manager.Instance.dificuldade = "Mão Dupla";
+        Manager.Instance.dificuldade = "Mão Simples";
         #endif
 
         SetaAmbiente();
@@ -466,7 +466,10 @@ public class PlayerController : MonoBehaviour
         // segundos desde a ultima olhada para cada lado
         if (ultimaOlhadaEsquerda != DateTime.MinValue){
             ts = now.Subtract(ultimaOlhadaEsquerda);
-            Manager.Instance.ultimaOlhadaEsquerda = ts.Seconds;
+            if (olhadasEsquerda <= 0)
+                Manager.Instance.ultimaOlhadaEsquerda = -1;
+            else
+                Manager.Instance.ultimaOlhadaEsquerda = ts.Seconds;
         } 
         else {
            Manager.Instance.ultimaOlhadaEsquerda = -1; 
@@ -474,7 +477,10 @@ public class PlayerController : MonoBehaviour
 
         if (ultimaOlhadaDireita != DateTime.MinValue){
             ts = now.Subtract(ultimaOlhadaDireita);
-            Manager.Instance.ultimaOlhadaDireita = ts.Seconds;
+            if (olhadasDireita <= 0)
+                Manager.Instance.ultimaOlhadaDireita = -1;
+            else
+                Manager.Instance.ultimaOlhadaDireita = ts.Seconds;
         } 
         else {
            Manager.Instance.ultimaOlhadaDireita = -1; 
