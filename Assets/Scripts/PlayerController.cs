@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour
     const float posicaoY = 0f;
     // velocidade em unidades/s  (m/s)
     float velocidadeAndando = 5/3.6f;
-    float velocidadeJogador = 15/3.6f;
+    float velocidadeJogador = 5/3.6f;
     float comprimentoCarro = 5.2f;
     float sentidoRua = 1;
     float hitboxLarguraCarro = 3f; // largura maior que a do carro 
@@ -319,23 +319,23 @@ public class PlayerController : MonoBehaviour
                     // Debug.Log("Carro x: "+ (carro.position.x + comprimentoCarro/2) + " z: " + (carro.position.z + hitboxLarguraCarro/2));
                     
                     PararCarros();
-                    Debug.Log("Bateu na frente");
+                    // Debug.Log("Bateu na frente");
                     return;
                 }
             }
             // testando o caso de bater no lado do carro
-            if ((Mathf.Abs(carro.position.z - hitboxLarguraCarro/2) - transform.position.z) < 1.5){ 
+            // if ((Mathf.Abs(carro.position.z - hitboxLarguraCarro/2) - transform.position.z) < 1.5){ 
                 if ((carro.position.x - comprimentoCarro/2) <= 
                 transform.position.x && transform.position.x <= (carro.position.x + comprimentoCarro/2)){//voce esta do lado do carro
                     if (Mathf.Abs(transform.position.x - (carro.position.x - sentidoRua * comprimentoCarro/2)) / Manager.Instance.defaultSpeed >= // tempo que o carro leva para passar a traseira pelo ponto onde esta o jogador deve ser maior ou igual do que o tempo que o jogador leva para chegar até o carro para colidir
                     (Mathf.Abs((carro.position.z - hitboxLarguraCarro/2) - transform.position.z)) // distancia do jogador ate o carro 
                     / velocidadeJogador){  
                         PararCarros();
-                        Debug.Log("Bateu no meio");
+                        // Debug.Log("Bateu no meio");
                         return;
                 }
                 }
-            }
+            // }
             
         }
     }

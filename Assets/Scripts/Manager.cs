@@ -108,31 +108,6 @@ public class Manager : Singleton<Manager>
                         ;
 
 
-        // linha.timestamp 
-        // linha.nome 
-        // linha.idade 
-        // linha.altura
-
-        // linha.velocidade 
-        // linha.ambiente 
-        // linha.periodo  
-        // linha.dificuldade 
-
-        // linha.houveAcidente 
-        // linha.faixaAcidente 
-        // linha.cruzamentoCorreto 
-        // linha.distanciaCruzamento
-        // linha.distanciaCarroMaisProximo 
-        // linha.faixaCarroMaisProximo 
-        // linha.tempoParaTomadaDeDecisao 
-        // linha.quantidadeDeCarrosQueJaPassaram 
-        // linha.quantidadeDeCarrosEnquantoAtravessava 
-        // linha.quantidadeDeOlhadasEsquerda 
-        // linha.quantidadeDeOlhadasDireita 
-        // linha.ultimaOlhadaEsquerda 
-        // linha.ultimaOlhadaDireita 
-        // 21
-
         string corpo = "";
         
         foreach (LinhaDB linha in banco.Table)
