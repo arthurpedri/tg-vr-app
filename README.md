@@ -2,7 +2,7 @@
 [![Unity](https://img.shields.io/badge/Unity-2019.4%20LTS-brightgreen)](https://unity3d.com/unity/qa/lts-releases?version=2019.4)
 [![git-lfs](https://img.shields.io/badge/git--lfs-latest-brightgreen)](https://git-lfs.github.com/)
 
-An app for simulating pedestrian street crossing situation in first person perspective.
+An app for simulating pedestrian street crossing situations in first person perspective.
 
 ## Paper
 [Pedestrian Street Crossing Simulator in VR](<./A PEDESTRIAN STREET CROSSING VIRTUAL REALITY SIMULATOR FOR MOBILE DEVICES DEVELOPED IN UNITY.pdf>)
